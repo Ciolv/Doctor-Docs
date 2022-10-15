@@ -22,13 +22,16 @@ export default class App extends React.Component<Props, State> {
   render() {
     if (this.state?.authenticated) {
       return (
-        <>
+        <div>
           <Navigation authenticated={this.state.authenticated} />
           <Routes>
             <Route path="/" element={<Navigate replace to="/home" />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/record" element={<Home />} />
+            <Route path="/for-me" element={<Home />} />
+            <Route path="/security" element={<Home />} />
           </Routes>
-        </>
+        </div>
       );
     }
 

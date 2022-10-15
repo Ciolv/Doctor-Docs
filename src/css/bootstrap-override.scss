@@ -1,0 +1,18 @@
+// Your variable overrides
+
+$dark-gray: #282c34;
+$light-gray: #3b424b;
+$purple: #797CE5EF;
+
+$body-bg: $dark-gray;
+$body-color: $light-gray;
+$primary: $purple;
+$text-color-dark: #E8E8E8EF;
+
+$nav-link-color: $text-color-dark;
+$navbar-light-color: $text-color-dark;
+$navbar-light-active-color: $primary;
+
+
+// Bootstrap and its default variables
+@import "node_modules/bootstrap/scss/bootstrap";
