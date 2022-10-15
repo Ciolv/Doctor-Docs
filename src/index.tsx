@@ -5,6 +5,8 @@ import App from "./ts/App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+
 // noinspection NestedFunctionCallJS
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
