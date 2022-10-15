@@ -27,7 +27,7 @@ const mockData = [{
 export class RecordList extends React.Component<Props, State> {
   render() {
     return (
-      <Container fluid>
+      <Container fluid className="record-list">
         <Row className="file-record file-record-headline">
           <Col className="file-thumbnail" xs={"1"}></Col>
           <Col className="file-name" xs={"7"}>Name</Col>
@@ -41,7 +41,7 @@ export class RecordList extends React.Component<Props, State> {
           mockData.map(record =>
                          <Row className="file-record" key={record.id} id={record.id.toString()}>
                            <Col className="file-thumbnail" xs={"1"}><img src={record.thumbnail} /></Col>
-                           <Col className="file-name" xs={"7"}>{record.fileName}</Col>
+                           <Col className="file-name" xs={"6"}>{record.fileName}</Col>
                            <Col className="file-options" xs={"1"}>
                              <div onClick={(e) => console.log((e.currentTarget
                                  .parentNode?.parentNode as HTMLElement
