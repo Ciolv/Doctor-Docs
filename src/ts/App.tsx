@@ -6,6 +6,7 @@ import { Login } from "./page/Login";
 import { Navigation } from "./component/Navigation";
 import { Record } from "./page/Record";
 import { Registration } from "./page/Registration";
+import { Security } from "./page/Security";
 
 type Props = {};
 
@@ -36,7 +37,7 @@ export default class App extends React.Component<Props, State> {
               <Route path="shared" element={<Record />} />
             </Route>
             <Route path="/for-me" element={<Registration />} />
-            <Route path="/security" element={<Home />} />
+            <Route path="/security" element={<Security />} />
             <Route path="/registration" element={<Registration />} />
           </Routes>
         </div>
