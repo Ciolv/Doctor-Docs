@@ -1,0 +1,17 @@
+.icon-text-start {
+  padding-top: 0.1rem;
+  padding-left: 0.5rem;
+}
+
+.icon-text-end {
+  padding-top: 0.1rem;
+  padding-left: 0.5rem;
+}
+
+.labeled-icon {
+  white-space: nowrap;
+}
+
+.labeled-icon > svg {
+  margin-bottom: 0.3rem;
+}

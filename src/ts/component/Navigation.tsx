@@ -1,10 +1,14 @@
-// @flow
 import * as React from "react";
 import { Button, Nav, Navbar } from "react-bootstrap";
 import { NavLink, Outlet } from "react-router-dom";
 
 import Heartbeat from "../../img/Heartbeat.svg";
-import "../../css/Navigation.css";
+import "../../css/Navigation.scss";
+import { AiFillHome } from "react-icons/ai";
+import { LabeledIcon } from "./LabeledIcon";
+import { FaBox } from "react-icons/fa";
+import { BsFillShieldLockFill } from "react-icons/bs";
+import { IoMdPerson } from "react-icons/io";
 
 type Props = {
   authenticated?: boolean;
@@ -21,16 +25,17 @@ export class Navigation extends React.Component<Props, State> {
           </Navbar.Brand>
           <Nav>
             <Nav.Item>
-              <Nav.Link as={NavLink} to="/home">Start</Nav.Link>
+              <Nav.Link as={NavLink} to="/home"><LabeledIcon text="Start" icon={AiFillHome} /></Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link as={NavLink} to="/record">Akte</Nav.Link>
+              <Nav.Link as={NavLink} to="/record"><LabeledIcon text="Akte" icon={FaBox} /></Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link as={NavLink} to="/for-me">Für mich</Nav.Link>
+              <Nav.Link as={NavLink} to="/for-me"><LabeledIcon text="Für mich" icon={IoMdPerson} /></Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link as={NavLink} to="/security">Sicherheit</Nav.Link>
+              <Nav.Link as={NavLink} to="/security"><LabeledIcon text="Sicherheit"
+                                                                 icon={BsFillShieldLockFill} /></Nav.Link>
             </Nav.Item>
           </Nav>
           <Navbar.Collapse className="justify-content-end">
