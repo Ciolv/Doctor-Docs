@@ -1,0 +1,32 @@
+@import "bootstrap-override";
+
+.file-record {
+  border-bottom: 1px solid $light-gray;
+}
+
+.file-record.row {
+  align-items: center;
+}
+
+.file-record.file-record-headline.row {
+  margin-top: 1.5rem;
+}
+
+.file-thumbnail {
+  width: 3rem;
+  height: 3rem;
+}
+
+.file-thumbnail > img {
+  margin: 0.5rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.file-info {
+  width: 1rem;
+}
+
+.container {
+  min-height: 93vh;
+}
