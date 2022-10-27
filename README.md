@@ -76,3 +76,9 @@ You can learn more in
 the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Credits
+
+Heartbeat image by
+timtjtim (https://openclipart.org/detail/216861/heartbeat-logo-for-healthse-no-background-white-heart).  
+Doctor image by Juhele (https://openclipart.org/detail/285051/medicine-doctor-man-with-stethoscope-talking).
