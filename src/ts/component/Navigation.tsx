@@ -25,17 +25,24 @@ export class Navigation extends React.Component<Props, State> {
           </Navbar.Brand>
           <Nav>
             <Nav.Item>
-              <Nav.Link as={NavLink} to="/home"><LabeledIcon text="Start" icon={AiFillHome} /></Nav.Link>
+              <Nav.Link as={NavLink} to="/home">
+                <LabeledIcon text="Start" icon={AiFillHome} />
+              </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link as={NavLink} to="/record"><LabeledIcon text="Akte" icon={FaBox} /></Nav.Link>
+              <Nav.Link as={NavLink} to="/record">
+                <LabeledIcon text="Akte" icon={FaBox} />
+              </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link as={NavLink} to="/for-me"><LabeledIcon text="Für mich" icon={IoMdPerson} /></Nav.Link>
+              <Nav.Link as={NavLink} to="/for-me">
+                <LabeledIcon text="Für mich" icon={IoMdPerson} />
+              </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link as={NavLink} to="/security"><LabeledIcon text="Sicherheit"
-                                                                 icon={BsFillShieldLockFill} /></Nav.Link>
+              <Nav.Link as={NavLink} to="/security">
+                <LabeledIcon text="Sicherheit" icon={BsFillShieldLockFill} />
+              </Nav.Link>
             </Nav.Item>
           </Nav>
           <Navbar.Collapse className="justify-content-end">
@@ -45,5 +52,5 @@ export class Navigation extends React.Component<Props, State> {
         <Outlet />
       </>
     );
-  };
+  }
 }

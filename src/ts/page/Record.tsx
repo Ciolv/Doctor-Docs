@@ -21,5 +21,5 @@ export class Record extends React.Component<Props, State> {
         </Row>
       </Container>
     );
-  };
+  }
 }

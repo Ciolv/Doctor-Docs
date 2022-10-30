@@ -14,10 +14,7 @@ export class RecordNav extends React.Component<Props, State> {
   render() {
     return (
       <>
-        <Nav
-          className="flex-column justify-content-start"
-          variant="dark"
-        >
+        <Nav className="flex-column justify-content-start" variant="dark">
           <Nav.Item>
             <Nav.Link as={NavLink} to="/record">
               <LabeledIcon text="Alle Dateien" icon={AiFillFolder} />
@@ -42,5 +39,5 @@ export class RecordNav extends React.Component<Props, State> {
         <Outlet />
       </>
     );
-  };
+  }
 }

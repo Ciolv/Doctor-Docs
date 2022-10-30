@@ -2,7 +2,6 @@ import React from "react";
 import doctor from "../../img/Doctor.svg";
 import "../../css/App.css";
 
-
 export class Home extends React.Component {
   render() {
     return (
@@ -15,5 +14,5 @@ export class Home extends React.Component {
         </header>
       </div>
     );
-  };
+  }
 }

@@ -48,8 +48,7 @@ export class Registration extends React.Component<Props, State> {
           </Col>
           <Col xs={3} />
         </Row>
-
       </Container>
     );
-  };
+  }
 }

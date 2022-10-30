@@ -11,5 +11,5 @@ export class Login extends React.Component<Props, State> {
         <Button>Login</Button>
       </div>
     );
-  };
+  }
 }
