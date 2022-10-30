@@ -2,16 +2,15 @@
 
 $dark-gray: #282c34;
 $light-gray: #3b424b;
-$purple: #797CE5EF;
+$purple: #797ce5ef;
 
 $body-bg: $dark-gray;
-$body-color: #E8E8E8EF;
+$body-color: #e8e8e8ef;
 $primary: $purple;
 
 $nav-link-color: $body-color;
 $navbar-light-color: $body-color;
 $navbar-light-active-color: $primary;
-
 
 // Bootstrap and its default variables
 @import "node_modules/bootstrap/scss/bootstrap";
