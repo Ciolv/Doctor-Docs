@@ -9,10 +9,11 @@ export class Home extends React.Component {
         <header className="App-header">
           <img src={doctor} className="App-logo" alt="logo" />
           <p>
-            Edit <code>src/ts/App.tsx</code> and save to reload.
+            <b>Doctor Docs</b><br/>
+            Wo sind denn meine Zähne?
           </p>
         </header>
       </div>
-    );
+    )
   }
 }
