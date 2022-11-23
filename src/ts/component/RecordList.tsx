@@ -3,7 +3,7 @@ import { Col, Container, Row } from "react-bootstrap";
 import "../../css/RecordList.scss";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { ThumbnailMock } from "../utils/MockData";
-import { GiShare } from "react-icons/gi";
+import ShareModal from "./ShareModal";
 
 type Props = {};
 type State = {};
@@ -47,16 +47,14 @@ export class RecordList extends React.Component<Props, State> {
         {mockData.map((record) => (
           <Row className="file-record" key={record.id} id={record.id.toString()}>
             <Col className="file-thumbnail" xs={"1"}>
-              <img src={record.thumbnail} />
+              <img alt={"Thumbnail"} src={record.thumbnail} />
             </Col>
             <Col className="file-name" xs={"6"}>
               {record.fileName}
             </Col>
             <Col className="file-options" xs={"1"}>
-              <div
-                onClick={(e) => console.log((e.currentTarget.parentNode?.parentNode as HTMLElement).getAttribute("id"))}
-              >
-                <GiShare />
+              <div>
+                <ShareModal />
               </div>
             </Col>
             <Col className="file-size" xs={"1"}>
