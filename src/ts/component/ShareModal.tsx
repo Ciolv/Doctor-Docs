@@ -5,13 +5,10 @@ import Modal from "react-bootstrap/Modal";
 import "../../css/ShareModal.scss";
 import { GiShare } from "react-icons/gi";
 import { Form } from "react-bootstrap";
-import * as http from "http";
 import axios from "axios";
 
 const mockData = [
-  {"id": 1, "name": "Dr. med. Jonas Pohle", "street": "Haardtstraße 16", "plz": "68163", "city": "Mannheim"},
-  {"id": 2, "name": "Dr. med. Roman Wetenkamp", "street": "Hans-Sachs-Ring 3", "plz": "68199", "city": "Mannheim"},
-  {"id": 3, "name": "Dr. med. Yannic Römer", "street": "T2 3", "plz": "68161", "city": "Mannheim"}
+  {"id": 1, "name": "Eine Ärztin Ihres Vertrauens", "street": "Musterstraße 42", "plz": "20120", "city": "Glückstadt"},
 ]
 
 export default function ShareModal() {
@@ -24,13 +21,11 @@ export default function ShareModal() {
 
   async function docSearch(event: any) {
     setInputValue(event?.target?.value);
-    console.log("Got input, send request to backend ...")
-    axios.get("https://localhost:8080/doctors/"+event.target.value).
+    axios.get("http://localhost:8080/doctors/"+event.target.value).
     then(async (response) => {
       const doctors = response.data;
       setDocs(doctors);
     });
-    // setDocs
   }
 
 
