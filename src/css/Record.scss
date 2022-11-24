@@ -1,0 +1,21 @@
+@import "bootstrap-override";
+
+
+div .row > * {
+  padding: 0;
+}
+
+.input-bar {
+  padding: 0.75rem 0.15rem 0.15rem 0.15rem;
+  margin: -1rem 0 -2rem 0;
+  border-bottom: 1px solid $light-gray;
+}
+
+#fileInput {
+  hidden: true
+}
+
+#fileInputLabel {
+  font-size: 3rem;
+  color: $primary;
+}
