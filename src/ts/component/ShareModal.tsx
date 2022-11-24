@@ -19,10 +19,10 @@ export default function ShareModal() {
   const handleShow = () => setShow(true);
 
 
-  async function docSearch(event: any) {
-    setInputValue(event?.target?.value);
-    axios.get("http://localhost:8080/doctors/"+event.target.value).
-    then(async (response) => {
+  function docSearch(event: React.ChangeEvent<HTMLInputElement>) {
+    setInputValue(event.target.value);
+    axios.get(`http://localhost:8080/doctors/${event.target.value}`).
+    then((response) => {
       const doctors = response.data;
       setDocs(doctors);
     });
