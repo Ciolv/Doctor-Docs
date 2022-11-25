@@ -4,10 +4,10 @@ import "../../css/RecordList.scss";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { ThumbnailMock } from "../utils/MockData";
 import ShareModal from "./ShareModal";
-import { GiShare } from "react-icons/gi";
 import { File } from "../models/File";
 import axios from "axios";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
 type State = {
   files: File[];
