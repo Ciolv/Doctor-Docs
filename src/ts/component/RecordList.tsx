@@ -7,11 +7,13 @@ import { GiShare } from "react-icons/gi";
 import { File } from "../models/File";
 import axios from "axios";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
 type State = {
   files: File[];
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockData = [
   {
     id: 1,
@@ -66,26 +68,31 @@ export class RecordList extends React.Component<Props, State> {
       }
 
       this.setState({
-                      files: files,
-                    });
+        files: files,
+      });
     }
   }
 
-  async downloadFile(fileId: string | null) {
+  async downloadFile(fileId: string | null, fileName: string | null) {
     if (fileId == null) {
       return;
     }
-    const getAllFilesURI = `http://localhost:8080/files/${fileId}?userId=${this.userId}`;
-    const result = await axios.get(getAllFilesURI);
-    const dataUrl = URL.createObjectURL(new Blob(result.data.content));
-    const anchor = document.createElement("a");
-    anchor.href = dataUrl;
-    anchor.download = result.data.name;
-    anchor.click();
-    document.body.removeChild(anchor);
-    URL.revokeObjectURL(dataUrl);
-
-    return result.data.content;
+    axios({
+      url: `http://localhost:8080/files/${fileId}?userId=${this.userId}`,
+      method: "GET",
+      responseType: "blob",
+    }).then((response) => {
+      const url = URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      if (typeof fileName === "string") {
+        link.setAttribute("download", fileName);
+      }
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
   }
 
   render() {
@@ -114,16 +121,25 @@ export class RecordList extends React.Component<Props, State> {
               <Col
                 className="file-name"
                 xs={"6"}
-                // onClick={(e) => this.downloadFile((e.currentTarget.parentNode as HTMLElement).getAttribute("id"))}
+                onClick={(e) =>
+                  this.downloadFile(
+                    (e.currentTarget.parentNode as HTMLElement).getAttribute("id"),
+                    (e.currentTarget as HTMLElement).innerText
+                  )
+                }
               >
-                {/*{file.name}*/}
-                <a href={`http://localhost:8080/files/${file.id}?userId=${this.userId}`} download={file.name}>
-                  {file.name}
-                </a>
+                {file.name}
+                {/*<a*/}
+                {/*  href={`http://localhost:8080/files/${file.id}?userId=${this.userId}`}*/}
+                {/*  download={file.name}*/}
+                {/*  target={"_blank"} rel="noreferrer"*/}
+                {/*>*/}
+                {/*  {file.name}*/}
+                {/*</a>*/}
               </Col>
               <Col className="file-options" xs={"1"}>
                 <div>
-                  <GiShare/>
+                  <GiShare />
                 </div>
               </Col>
               <Col className="file-size" xs={"1"}>
@@ -133,7 +149,7 @@ export class RecordList extends React.Component<Props, State> {
                 {file.lastUpdateTime.toDateString()}
               </Col>
               <Col className="file-info" xs={"1"}>
-                <AiOutlineInfoCircle/>
+                <AiOutlineInfoCircle />
               </Col>
             </Row>
           ))
