@@ -32,7 +32,7 @@ const mockData = [
 ];
 
 export class RecordList extends React.Component<Props, State> {
-  userId = "637201eed818997609ef5915";
+  private static userId = "637201eed818997609ef5915";
 
   constructor(props: Props) {
     super(props);
@@ -42,12 +42,35 @@ export class RecordList extends React.Component<Props, State> {
     };
   }
 
+  private static downloadFile(fileId: string | null, fileName: string | null) {
+    console.log("File");
+    if (fileId === null) {
+      return;
+    }
+    axios({
+      url: `http://localhost:8080/files/${fileId}?userId=${RecordList.userId}`,
+      method: "GET",
+      responseType: "blob",
+    }).then((response) => {
+      const url = URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      if (typeof fileName === "string") {
+        link.setAttribute("download", fileName);
+      }
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+  }
+
   componentDidMount() {
     this.getFiles();
   }
 
   async getFiles() {
-    const getAllFilesURI = "http://localhost:8080/files?userId=" + this.userId;
+    const getAllFilesURI = `http://localhost:8080/files?userId=${RecordList.userId}`;
     const result = await axios.get(getAllFilesURI);
 
     if (result.status === 200) {
@@ -68,31 +91,9 @@ export class RecordList extends React.Component<Props, State> {
       }
 
       this.setState({
-        files: files,
+        files,
       });
     }
-  }
-
-  async downloadFile(fileId: string | null, fileName: string | null) {
-    if (fileId == null) {
-      return;
-    }
-    axios({
-      url: `http://localhost:8080/files/${fileId}?userId=${this.userId}`,
-      method: "GET",
-      responseType: "blob",
-    }).then((response) => {
-      const url = URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      if (typeof fileName === "string") {
-        link.setAttribute("download", fileName);
-      }
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    });
   }
 
   render() {
@@ -112,51 +113,38 @@ export class RecordList extends React.Component<Props, State> {
           <Col className="file-info" xs={"1"}></Col>
         </Row>
 
-        {this.state !== null ? (
-          this.state.files.map((file) => (
-            <Row className="file-record" key={file.id} id={file.id.toString()}>
-              <Col className="file-thumbnail" xs={"1"}>
-                IMG
-              </Col>
-              <Col
-                className="file-name"
-                xs={"6"}
-                onClick={(e) =>
-                  this.downloadFile(
-                    (e.currentTarget.parentNode as HTMLElement).getAttribute("id"),
-                    (e.currentTarget as HTMLElement).innerText
-                  )
-                }
-              >
-                {file.name}
-                {/*<a*/}
-                {/*  href={`http://localhost:8080/files/${file.id}?userId=${this.userId}`}*/}
-                {/*  download={file.name}*/}
-                {/*  target={"_blank"} rel="noreferrer"*/}
-                {/*>*/}
-                {/*  {file.name}*/}
-                {/*</a>*/}
-              </Col>
-              <Col className="file-options" xs={"1"}>
-                <div>
-                  <GiShare />
-                </div>
-              </Col>
-              <Col className="file-size" xs={"1"}>
-                {file.getFileSize()}
-              </Col>
-              <Col className="file-modify-date" xs={"2"}>
-                {file.lastUpdateTime.toDateString()}
-              </Col>
-              <Col className="file-info" xs={"1"}>
-                <AiOutlineInfoCircle />
-              </Col>
-            </Row>
-          ))
-        ) : (
-          <></>
-        )}
+        {this.state.files.map((file) => (
+          <Row className="file-record" key={file.id} id={file.id.toString()}>
+            <Col className="file-thumbnail" xs={"1"}>
+              IMG
+            </Col>
+            <Col className="file-name" xs={"6"} onClick={this.handleDownloadClick}>
+              {file.name}
+            </Col>
+            <Col className="file-options" xs={"1"}>
+              <div>
+                <GiShare />
+              </div>
+            </Col>
+            <Col className="file-size" xs={"1"}>
+              {file.getFileSize()}
+            </Col>
+            <Col className="file-modify-date" xs={"2"}>
+              {file.lastUpdateTime.toDateString()}
+            </Col>
+            <Col className="file-info" xs={"1"}>
+              <AiOutlineInfoCircle />
+            </Col>
+          </Row>
+        ))}
       </Container>
+    );
+  }
+
+  private handleDownloadClick(e: React.MouseEvent<HTMLElement, MouseEvent>) {
+    RecordList.downloadFile(
+      (e.currentTarget.parentNode as HTMLElement).getAttribute("id"),
+      (e.currentTarget as HTMLElement).innerText
     );
   }
 }

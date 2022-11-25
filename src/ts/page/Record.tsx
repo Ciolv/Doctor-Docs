@@ -7,10 +7,25 @@ import { RecordList } from "../component/RecordList";
 import axios from "axios";
 import { IoAddCircle } from "react-icons/io5";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
+// eslint-disable-next-line @typescript-eslint/ban-types
 type State = {};
 
 export class Record extends React.Component<Props, State> {
+  private static postFile(inputFiles: FileList | null) {
+    if (inputFiles !== null) {
+      if (inputFiles.length !== 0) {
+        const file = inputFiles[0];
+        const formData = new FormData();
+        formData.set("file", file);
+        axios.post("http://localhost:8080/files/upload", formData).then((res) => {
+          console.log(res);
+        });
+      }
+    }
+  }
+
   render() {
     return (
       <>
@@ -36,19 +51,6 @@ export class Record extends React.Component<Props, State> {
 
   pFile(e: ChangeEvent) {
     const files = (e.target as EventTarget & HTMLInputElement).files;
-    this.postFile(files);
-  }
-
-  postFile(inputFiles: FileList | null) {
-    if (inputFiles !== null) {
-      if (inputFiles.length !== 0) {
-        const file = inputFiles[0];
-        const formData = new FormData();
-        formData.set("file", file);
-        axios.post("http://localhost:8080/files/upload", formData).then((res) => {
-          console.log(res);
-        });
-      }
-    }
+    Record.postFile(files);
   }
 }
