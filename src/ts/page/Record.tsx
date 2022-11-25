@@ -34,7 +34,7 @@ export class Record extends React.Component<Props, State> {
           </Col>
           <Col id="main-content" xs={10}>
             <div className={"input-bar"}>
-              <input id="fileInput" type="file" onChange={this.pFile} hidden />
+              <input id="fileInput" type="file" onChange={this.handleFileUpload} hidden />
               <label id="fileInputLabel" htmlFor="fileInput">
                 <IoAddCircle />
               </label>
@@ -46,7 +46,7 @@ export class Record extends React.Component<Props, State> {
     );
   }
 
-  pFile(e: React.ChangeEvent<HTMLInputElement>) {
+  handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = (e.target as EventTarget & HTMLInputElement).files;
     Record.postFile(files);
   }
