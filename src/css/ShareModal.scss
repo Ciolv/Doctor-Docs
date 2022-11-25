@@ -1,0 +1,8 @@
+@import "bootstrap-override";
+
+.modal-body,
+.modal-header,
+.modal-footer {
+  background-color: $body-bg !important;
+  border-bottom: 1px solid $light-gray !important;
+}

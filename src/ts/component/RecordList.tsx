@@ -3,11 +3,11 @@ import { Col, Container, Row } from "react-bootstrap";
 import "../../css/RecordList.scss";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { ThumbnailMock } from "../utils/MockData";
+import ShareModal from "./ShareModal";
 import { GiShare } from "react-icons/gi";
 import { File } from "../models/File";
 import axios from "axios";
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
 type State = {
   files: File[];
@@ -104,6 +104,7 @@ export class RecordList extends React.Component<Props, State> {
           <Col className="file-name" xs={"7"}>
             Name
           </Col>
+          <Col className="file-options" xs={"1"}></Col>
           <Col className="file-size" xs={"1"}>
             Größe
           </Col>
@@ -123,7 +124,7 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
             <Col className="file-options" xs={"1"}>
               <div>
-                <GiShare />
+                <ShareModal />
               </div>
             </Col>
             <Col className="file-size" xs={"1"}>
