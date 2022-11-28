@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import "../../css/RecordList.scss";
-import { AiOutlineInfoCircle } from "react-icons/ai";
+import { AiFillStar, AiOutlineInfoCircle, AiOutlineStar } from "react-icons/ai";
 import { ThumbnailMock } from "../utils/MockData";
 import ShareModal from "./ShareModal";
 import { File } from "../models/File";
@@ -48,10 +48,10 @@ export class RecordList extends React.Component<Props, State> {
       return;
     }
     axios({
-      url: `http://localhost:8080/files/${fileId}?userId=${RecordList.userId}`,
-      method: "GET",
-      responseType: "blob",
-    }).then((response) => {
+            url: `http://localhost:8080/files/${fileId}?userId=${RecordList.userId}`,
+            method: "GET",
+            responseType: "blob",
+          }).then((response) => {
       const url = URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -85,14 +85,15 @@ export class RecordList extends React.Component<Props, State> {
             file.ownerId,
             file.users,
             file.size,
+            file.marked,
             new Date(Date.parse(file.lastUpdateTime))
           )
         );
       }
 
       this.setState({
-        files,
-      });
+                      files,
+                    });
     }
   }
 
@@ -124,7 +125,13 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
             <Col className="file-options" xs={"1"}>
               <div>
-                <ShareModal />
+                <button value={String(file.marked)} onClick={this.updateMarked}
+                        style={{ background: "none", border: "none" }}>
+                  {(file.marked
+                  ) ? <AiFillStar className={"star yellow"}/> : <AiOutlineStar className={"star"}/>}
+                </button>
+                &nbsp; &nbsp; &nbsp; &nbsp;
+                <ShareModal/>
               </div>
             </Col>
             <Col className="file-size" xs={"1"}>
@@ -134,7 +141,7 @@ export class RecordList extends React.Component<Props, State> {
               {file.lastUpdateTime.toDateString()}
             </Col>
             <Col className="file-info" xs={"1"}>
-              <AiOutlineInfoCircle />
+              <AiOutlineInfoCircle/>
             </Col>
           </Row>
         ))}
@@ -144,8 +151,26 @@ export class RecordList extends React.Component<Props, State> {
 
   private handleDownloadClick(e: React.MouseEvent<HTMLElement, MouseEvent>) {
     RecordList.downloadFile(
-      (e.currentTarget.parentNode as HTMLElement).getAttribute("id"),
-      (e.currentTarget as HTMLElement).innerText
+      (e.currentTarget.parentNode as HTMLElement
+      ).getAttribute("id"),
+      (e.currentTarget as HTMLElement
+      ).innerText
     );
+  }
+
+  private updateMarked(e: React.MouseEvent<HTMLElement, MouseEvent>) {
+    // Send UPDATE request to backend for the specified file
+    const id = (e.currentTarget.parentNode?.parentNode?.parentNode as HTMLElement
+    ).getAttribute("id")
+    const value = (e.currentTarget as HTMLElement
+                  ).getAttribute("value") === "true";
+    console.log(`Set marked for ${String(id)} to ${value}`);
+
+    axios({
+            url: `http://localhost:8080/files/mark/${id}?value=${!(value
+            )}`,
+            method: "GET",
+            responseType: "json",
+          });
   }
 }

@@ -6,6 +6,7 @@ export class File {
   ownerId;
   users;
   size;
+  marked;
   lastUpdateTime;
 
   constructor(
@@ -16,6 +17,7 @@ export class File {
     ownerId: string,
     users: [],
     size: number,
+    marked: boolean,
     lastUpdateTime: Date
   ) {
     this.id = id;
@@ -25,6 +27,7 @@ export class File {
     this.ownerId = ownerId;
     this.users = users;
     this.size = size;
+    this.marked = marked;
     this.lastUpdateTime = lastUpdateTime;
   }
 
