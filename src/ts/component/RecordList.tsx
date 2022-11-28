@@ -139,7 +139,7 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
             <Col className="file-options" xs={"1"}>
               <div>
-                <button value={String(file.marked)} onClick={(e) => this.updateMarked(e)}
+                <button type={"button"} value={String(file.marked)} onClick={(e) => this.updateMarked(e)}
                         style={{ background: "none", border: "none" }}>
                   {(file.marked
                   ) ? <AiFillStar className={"star yellow"}/> : <AiOutlineStar className={"star"}/>}
@@ -178,7 +178,7 @@ export class RecordList extends React.Component<Props, State> {
     const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
 
     axios({
-            url: `http://localhost:8080/files/mark/${id}?value=${!(value)}`,
+            url: `http://localhost:8080/files/mark/${id}?value=${!(value).toString()}`,
             method: "GET",
             responseType: "json",
           });
