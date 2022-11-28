@@ -8,6 +8,7 @@ import { Record } from "./page/Record";
 import { Registration } from "./page/Registration";
 import { Security } from "./page/Security";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
 
 type State = {
@@ -39,6 +40,7 @@ export default class App extends React.Component<Props, State> {
             <Route path="/for-me" element={<Registration />} />
             <Route path="/security" element={<Security />} />
             <Route path="/registration" element={<Registration />} />
+            <Route path={"/login"} element={<Login />} />
           </Routes>
         </div>
       );
