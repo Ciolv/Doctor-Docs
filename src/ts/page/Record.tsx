@@ -39,7 +39,7 @@ export class Record extends React.Component<Props, State> {
                 <IoAddCircle />
               </label>
             </div>
-            <RecordList />
+            <RecordList view={(window.location.href).split("/").slice(-1)[0]}/>
           </Col>
         </Row>
       </Container>

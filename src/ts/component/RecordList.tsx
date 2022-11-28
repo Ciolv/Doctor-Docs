@@ -8,7 +8,9 @@ import { File } from "../models/File";
 import axios from "axios";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-type Props = {};
+type Props = {
+  view: string;
+};
 type State = {
   files: File[];
 };
@@ -38,7 +40,7 @@ export class RecordList extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      files: [],
+      files: []
     };
   }
 
@@ -76,19 +78,19 @@ export class RecordList extends React.Component<Props, State> {
     if (result.status === 200) {
       const files: File[] = [];
       for (const file of result.data) {
-        files.push(
-          new File(
-            file._id,
-            file.name,
-            {},
-            file.parentId,
-            file.ownerId,
-            file.users,
-            file.size,
-            file.marked,
-            new Date(Date.parse(file.lastUpdateTime))
-          )
-        );
+          files.push(
+            new File(
+              file._id,
+              file.name,
+              {},
+              file.parentId,
+              file.ownerId,
+              file.users,
+              file.size,
+              file.marked,
+              new Date(Date.parse(file.lastUpdateTime))
+            )
+          );
       }
 
       this.setState({
@@ -98,6 +100,18 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   render() {
+    const files: File[] = [];
+    this.state.files.forEach((file) => {
+      if (
+        (this.props.view === "record") ||
+        (this.props.view === "shared") ||
+        ((this.props.view === "marked") && file.marked) ||
+        ((this.props.view === "newest") && (file.lastUpdateTime.getDate() > new Date().getDate()-8))
+      ) {
+        files.push(file);
+      }
+    })
+
     return (
       <Container fluid className="record-list">
         <Row className="file-record file-record-headline">
@@ -115,7 +129,7 @@ export class RecordList extends React.Component<Props, State> {
           <Col className="file-info" xs={"1"}></Col>
         </Row>
 
-        {this.state.files.map((file) => (
+        {files.map((file) => (
           <Row className="file-record" key={file.id} id={file.id.toString()}>
             <Col className="file-thumbnail" xs={"1"}>
               IMG
@@ -125,7 +139,7 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
             <Col className="file-options" xs={"1"}>
               <div>
-                <button value={String(file.marked)} onClick={this.updateMarked}
+                <button value={String(file.marked)} onClick={(e) => this.updateMarked(e)}
                         style={{ background: "none", border: "none" }}>
                   {(file.marked
                   ) ? <AiFillStar className={"star yellow"}/> : <AiOutlineStar className={"star"}/>}
@@ -160,17 +174,25 @@ export class RecordList extends React.Component<Props, State> {
 
   private updateMarked(e: React.MouseEvent<HTMLElement, MouseEvent>) {
     // Send UPDATE request to backend for the specified file
-    const id = (e.currentTarget.parentNode?.parentNode?.parentNode as HTMLElement
-    ).getAttribute("id")
-    const value = (e.currentTarget as HTMLElement
-                  ).getAttribute("value") === "true";
-    console.log(`Set marked for ${String(id)} to ${value}`);
+    const id = (e.currentTarget.parentNode?.parentNode?.parentNode as HTMLElement).getAttribute("id")
+    const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
 
     axios({
-            url: `http://localhost:8080/files/mark/${id}?value=${!(value
-            )}`,
+            url: `http://localhost:8080/files/mark/${id}?value=${!(value)}`,
             method: "GET",
             responseType: "json",
           });
+
+    const file = this.state.files.find((element) => element.id === id);
+    const files_mod = this.state.files;
+
+    if (file) {
+      this.state.files.indexOf(file)
+      files_mod[this.state.files.indexOf(file)] = new File(file.id, file.name, file.content, file.parentId, file.ownerId, file.users, file.size, !value, file.lastUpdateTime);
+      this.setState({files: files_mod});
+    }
+
+
+
   }
 }
