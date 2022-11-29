@@ -7,27 +7,48 @@ import { Navigation } from "./component/Navigation";
 import { Record } from "./page/Record";
 import { Registration } from "./page/Registration";
 import { Security } from "./page/Security";
+import * as msal from "@azure/msal-browser";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
 
 type State = {
-  authenticated: boolean;
+  accessToken: string;
+  identityToken: string;
 };
 
 export default class App extends React.Component<Props, State> {
+  private readonly handleLogin: (tokenResponse: msal.AuthenticationResult) => void;
+
   constructor(props: Props) {
     super(props);
     this.state = {
-      authenticated: true
+      accessToken: "",
+      identityToken: "",
+    };
+
+    this.handleLogin = async (tokenResponse: msal.AuthenticationResult) => {
+      this.setState({
+        identityToken: tokenResponse.idToken,
+        accessToken: tokenResponse.accessToken,
+      });
     };
   }
 
+  authenticated() {
+    return (
+      this.state.accessToken !== null &&
+      this.state.accessToken !== "" &&
+      this.state.identityToken !== null &&
+      this.state.identityToken !== ""
+    );
+  }
+
   render() {
-    if (this.state?.authenticated) {
+    if (this.authenticated()) {
       return (
         <div>
-          <Navigation authenticated={this.state.authenticated} />
+          <Navigation authenticated={this.authenticated()} />
           <Routes>
             <Route path="/" element={<Navigate replace to="/home" />} />
             <Route path="/home" element={<Home />} />
@@ -40,7 +61,7 @@ export default class App extends React.Component<Props, State> {
             <Route path="/for-me" element={<Registration />} />
             <Route path="/security" element={<Security />} />
             <Route path="/registration" element={<Registration />} />
-            <Route path={"/login"} element={<Login />} />
+            <Route path={"/login"} element={<Login onLogin={this.handleLogin} />} />
           </Routes>
         </div>
       );
@@ -48,7 +69,7 @@ export default class App extends React.Component<Props, State> {
 
     return (
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="*" element={<Login onLogin={this.handleLogin} />} />
       </Routes>
     );
   }

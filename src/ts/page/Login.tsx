@@ -1,10 +1,16 @@
 import * as React from "react";
 import * as msal from "@azure/msal-browser";
+import { Navigate } from "react-router-dom";
+import { Alert } from "react-bootstrap";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-type Props = {};
-// eslint-disable-next-line @typescript-eslint/ban-types
-type State = {};
+type Props = {
+  onLogin: (authToken: msal.AuthenticationResult) => void;
+};
+type State = {
+  loginRedirect: boolean;
+  loginError: boolean;
+};
 
 const msalConfig = {
   auth: {
@@ -16,18 +22,55 @@ const msalConfig = {
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
 export class Login extends React.Component<Props, State> {
-  async login_popup() {
+  constructor(props: Props) {
+    super(props);
+    const accounts = msalInstance.getAllAccounts();
+    if (accounts.length > 0) {
+      this.testSilentLogin(accounts[0]);
+    }
+    this.state = {
+      loginRedirect: false,
+      loginError: false,
+    };
+  }
+
+  async testSilentLogin(account: msal.AccountInfo) {
+    const request = { scopes: ["user.read"], account: account, forceRefresh: false };
     try {
-      await msalInstance.loginPopup({ scopes: ["user.read"] });
-    } catch (e) {
-      console.log(`Login failed ${e}`);
+      const tokenResponse = await msalInstance.acquireTokenSilent(request);
+      this.props.onLogin(tokenResponse);
+      return true;
+    } catch {
+      console.log("Silent login not possible");
+      return false;
+    }
+  }
+
+  async loginPopup() {
+    const request = { scopes: ["user.read"] };
+    console.log("popup fallback");
+    // fallback to interaction when silent call fails
+    try {
+      const tokenResponse = await msalInstance.acquireTokenPopup(request);
+      this.props.onLogin(tokenResponse);
+    } catch {
+      this.setState({
+        loginError: true,
+      });
     }
   }
 
   render() {
-    return (
+    return this.state.loginRedirect ? (
+      <Navigate to={"/home"} />
+    ) : this.state.loginError ? (
       <div>
-        <button className={"login-button"} onClick={() => this.login_popup()}></button>
+        <Alert className={"alert-danger"}>Your login attempt was unsuccessful. Please try it again.</Alert>
+        <button className={"login-button"} onClick={() => this.loginPopup()}></button>
+      </div>
+    ) : (
+      <div>
+        <button className={"login-button"} onClick={() => this.loginPopup()}></button>
       </div>
     );
   }
