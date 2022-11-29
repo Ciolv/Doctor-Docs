@@ -8,8 +8,18 @@
   align-items: center;
 }
 
+.star {
+  scale: 1.7;
+  color: white;
+}
+
+.yellow {
+  color: yellow;
+}
+
 .file-record.file-record-headline.row {
   margin-top: 1.5rem;
+  vertical-align: center;
 }
 
 .file-thumbnail {
