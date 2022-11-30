@@ -3,7 +3,7 @@ import {useState} from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../css/ShareModal.scss";
-import { GiShare } from "react-icons/gi";
+import { BsShare } from "react-icons/bs";
 import { Form } from "react-bootstrap";
 import axios from "axios";
 
@@ -31,8 +31,8 @@ export default function ShareModal() {
 
   return (
     <>
-      <Button className="nextButton" onClick={handleShow}>
-        <GiShare />
+      <Button style={{ background: "none", border: "none" }} onClick={handleShow}>
+        <BsShare className={"trashcan"}/>
       </Button>
 
       <Modal show={show} onHide={handleClose}>

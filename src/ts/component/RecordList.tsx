@@ -1,11 +1,12 @@
 import * as React from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import "../../css/RecordList.scss";
-import { AiFillStar, AiOutlineInfoCircle, AiOutlineStar } from "react-icons/ai";
 import { ThumbnailMock } from "../utils/MockData";
 import ShareModal from "./ShareModal";
+import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
+import { BsStar, BsStarFill } from "react-icons/bs";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
@@ -137,14 +138,14 @@ export class RecordList extends React.Component<Props, State> {
             <Col className="file-name" xs={"6"} onClick={this.handleDownloadClick}>
               {file.name}
             </Col>
-            <Col className="file-options" xs={"1"}>
+            <Col className="file-options" xs={"2"}>
               <div>
-                <button type={"button"} value={String(file.marked)} onClick={(e) => this.updateMarked(e)}
+                <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)}
                         style={{ background: "none", border: "none" }}>
                   {(file.marked
-                  ) ? <AiFillStar className={"star yellow"}/> : <AiOutlineStar className={"star"}/>}
-                </button>
-                &nbsp; &nbsp; &nbsp; &nbsp;
+                  ) ? <BsStarFill className={"star yellow"}/> : <BsStar className={"star"}/>}
+                </Button>
+                <DeleteModal id={file.id} name={file.name} owner={file.ownerId}/>
                 <ShareModal/>
               </div>
             </Col>
@@ -153,9 +154,6 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
             <Col className="file-modify-date" xs={"2"}>
               {file.lastUpdateTime.toDateString()}
-            </Col>
-            <Col className="file-info" xs={"1"}>
-              <AiOutlineInfoCircle/>
             </Col>
           </Row>
         ))}
@@ -175,10 +173,11 @@ export class RecordList extends React.Component<Props, State> {
   private updateMarked(e: React.MouseEvent<HTMLElement, MouseEvent>) {
     // Send UPDATE request to backend for the specified file
     const id = (e.currentTarget.parentNode?.parentNode?.parentNode as HTMLElement).getAttribute("id")
-    const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
+    const value = (e.currentTarget as HTMLElement)?.getAttribute("value") !== "true";
+    console.log(value);
 
     axios({
-            url: `http://localhost:8080/files/mark/${id}?value=${!(value).toString()}`,
+            url: `http://localhost:8080/files/mark/${id?.toString()}?value=${value.toString()}`,
             method: "GET",
             responseType: "json",
           });
@@ -188,11 +187,8 @@ export class RecordList extends React.Component<Props, State> {
 
     if (file) {
       this.state.files.indexOf(file)
-      files_mod[this.state.files.indexOf(file)] = new File(file.id, file.name, file.content, file.parentId, file.ownerId, file.users, file.size, !value, file.lastUpdateTime);
+      files_mod[this.state.files.indexOf(file)] = new File(file.id, file.name, file.content, file.parentId, file.ownerId, file.users, file.size, value, file.lastUpdateTime);
       this.setState({files: files_mod});
     }
-
-
-
   }
 }
