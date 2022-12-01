@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import "../../css/RecordList.scss";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import ShareModal from "./ShareModal";
 import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
@@ -122,21 +121,11 @@ export class RecordList extends React.Component<Props, State> {
             <Col className="file-thumbnail" xs={"1"}>
               IMG
             </Col>
-            <Col className="file-name" xs={"7"} onClick={this.handleDownloadClick}>
+            <Col className="file-name" xs={"6"} onClick={this.handleDownloadClick}>
               {file.name}
             </Col>
-            <Col className="file-options" xs={"1"}>
+            <Col className="file-options" xs={"2"}>
               <div>
-                <button
-                  type={"button"}
-                  value={String(file.marked)}
-                  onClick={(e) => this.updateMarked(e)}
-                  style={{ background: "none", border: "none" }}
-                >
-                  {file.marked ? <AiFillStar className={"star yellow"} /> : <AiOutlineStar className={"star"} />}
-                </button>
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                <ShareModal />
                 <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)}
                         style={{ background: "none", border: "none" }}>
                   {(file.marked
