@@ -1,10 +1,12 @@
 import * as React from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import "../../css/RecordList.scss";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import ShareModal from "./ShareModal";
+import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
+import { BsStar, BsStarFill } from "react-icons/bs";
 
 type Props = {
   identityToken: string;
@@ -101,7 +103,7 @@ export class RecordList extends React.Component<Props, State> {
     });
 
     return (
-      <Container fluid className="record-list" id={this.props.toggleReRender.toString()}>
+      <Container fluid className="record-list">
         <Row className="file-record file-record-headline">
           <Col className="file-thumbnail" xs={"1"}></Col>
           <Col className="file-name" xs={"8"}>
@@ -135,6 +137,13 @@ export class RecordList extends React.Component<Props, State> {
                 </button>
                 &nbsp; &nbsp; &nbsp; &nbsp;
                 <ShareModal />
+                <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)}
+                        style={{ background: "none", border: "none" }}>
+                  {(file.marked
+                  ) ? <BsStarFill className={"star yellow"}/> : <BsStar className={"star"}/>}
+                </Button>
+                <DeleteModal id={file.id} name={file.name} owner={file.ownerId}/>
+                <ShareModal/>
               </div>
             </Col>
             <Col className="file-size" xs={"1"}>
@@ -185,5 +194,8 @@ export class RecordList extends React.Component<Props, State> {
       );
       this.setState({ files: files_mod });
     }
+
+
+
   }
 }
