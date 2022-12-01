@@ -49,7 +49,6 @@ export class Login extends React.Component<Props, State> {
   async loginPopup() {
     const request = { scopes: ["user.read"] };
     console.log("popup fallback");
-    // fallback to interaction when silent call fails
     try {
       const tokenResponse = await msalInstance.acquireTokenPopup(request);
       this.props.onLogin(tokenResponse);
@@ -66,11 +65,11 @@ export class Login extends React.Component<Props, State> {
     ) : this.state.loginError ? (
       <div>
         <Alert className={"alert-danger"}>Your login attempt was unsuccessful. Please try it again.</Alert>
-        <button className={"login-button"} onClick={() => this.loginPopup()}></button>
+        <button className={"login-button btn btn-primary"} onClick={() => this.loginPopup()}>Login</button>
       </div>
     ) : (
       <div>
-        <button className={"login-button"} onClick={() => this.loginPopup()}></button>
+        <button className={"login-button btn btn-primary"} onClick={() => this.loginPopup()}>Login</button>
       </div>
     );
   }
