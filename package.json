@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@azure/msal-browser": "^2.31.0",
     "@azure/msal-node": "^1.14.2",
+    "@azure/msal-react": "^1.5.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
