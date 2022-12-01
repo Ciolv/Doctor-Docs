@@ -10,11 +10,7 @@ type Props = {
   registrationCompleted?: boolean;
 };
 
-type State = User & {
-  redirect: boolean
-}
-
-export class Registration extends React.Component<Props, State> {
+export class Registration extends React.Component<Props, User> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -26,8 +22,7 @@ export class Registration extends React.Component<Props, State> {
       last_name: "",
       number: 0,
       postcode: 0,
-      street: "",
-      redirect: false
+      street: ""
     };
   }
 

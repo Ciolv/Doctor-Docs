@@ -79,6 +79,7 @@ export class RecordList extends React.Component<Props, State> {
     }
   }
 
+  // skipcq: JS-0356
   shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: unknown): boolean {
     if (nextProps.toggleReRender !== this.props.toggleReRender) {
       this.getFiles();
@@ -126,13 +127,15 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
             <Col className="file-options" xs={"2"}>
               <div>
-                <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)}
-                        style={{ background: "none", border: "none" }}>
-                  {(file.marked
-                  ) ? <BsStarFill className={"star yellow"}/> : <BsStar className={"star"}/>}
+                <Button
+                  value={String(file.marked)}
+                  onClick={(e) => this.updateMarked(e)}
+                  style={{ background: "none", border: "none" }}
+                >
+                  {file.marked ? <BsStarFill className={"star yellow"} /> : <BsStar className={"star"} />}
                 </Button>
-                <DeleteModal id={file.id} name={file.name} owner={file.ownerId}/>
-                <ShareModal/>
+                <DeleteModal id={file.id} name={file.name} owner={file.ownerId} />
+                <ShareModal />
               </div>
             </Col>
             <Col className="file-size" xs={"1"}>
@@ -157,10 +160,13 @@ export class RecordList extends React.Component<Props, State> {
   private updateMarked(e: React.MouseEvent<HTMLElement, MouseEvent>) {
     // Send UPDATE request to backend for the specified file
     const id = (e.currentTarget.parentNode?.parentNode?.parentNode as HTMLElement).getAttribute("id");
+    if (id === null) {
+      return;
+    }
     const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
-    const url = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}`
+    const url = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}`;
     axios({
-      url: url,
+      url,
       method: "GET",
       responseType: "json",
     });
@@ -183,8 +189,5 @@ export class RecordList extends React.Component<Props, State> {
       );
       this.setState({ files: files_mod });
     }
-
-
-
   }
 }

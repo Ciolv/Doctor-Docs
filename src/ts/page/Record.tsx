@@ -58,8 +58,8 @@ export class Record extends React.Component<Props, State> {
   handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = (e.target as EventTarget & HTMLInputElement).files;
     this.postFile(files);
-    this.setState({
-      rerender: !this.state.rerender
-                  });
+    this.setState(prevState => ({
+      rerender: !prevState.rerender
+                  }));
   }
 }

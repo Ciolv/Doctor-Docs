@@ -1,11 +1,11 @@
 import * as React from "react";
-import * as msal from "@azure/msal-browser";
+import { AuthenticationResult, PublicClientApplication, AccountInfo } from "@azure/msal-browser";
 import { Navigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
-  onLogin: (authToken: msal.AuthenticationResult) => void;
+  onLogin: (authToken: AuthenticationResult) => void;
 };
 type State = {
   loginRedirect: boolean;
@@ -19,7 +19,7 @@ const msalConfig = {
   },
 };
 
-const msalInstance = new msal.PublicClientApplication(msalConfig);
+const msalInstance = new PublicClientApplication(msalConfig);
 
 export class Login extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -34,7 +34,8 @@ export class Login extends React.Component<Props, State> {
     };
   }
 
-  async testSilentLogin(account: msal.AccountInfo) {
+  async testSilentLogin(account: AccountInfo) {
+    // skipcq: JS-0240
     const request = { scopes: ["user.read"], account: account, forceRefresh: false };
     try {
       const tokenResponse = await msalInstance.acquireTokenSilent(request);
@@ -63,11 +64,15 @@ export class Login extends React.Component<Props, State> {
     ) : this.state.loginError ? (
       <div>
         <Alert className={"alert-danger"}>Your login attempt was unsuccessful. Please try it again.</Alert>
-        <button className={"login-button btn btn-primary"} onClick={() => this.loginPopup()}>Login</button>
+        <button type={"button"} className={"login-button btn btn-primary"} onClick={() => this.loginPopup()}>
+          Login
+        </button>
       </div>
     ) : (
       <div>
-        <button className={"login-button btn btn-primary"} onClick={() => this.loginPopup()}>Login</button>
+        <button type={"button"} className={"login-button btn btn-primary"} onClick={() => this.loginPopup()}>
+          Login
+        </button>
       </div>
     );
   }

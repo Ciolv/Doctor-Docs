@@ -7,7 +7,7 @@ import { Navigation } from "./component/Navigation";
 import { Record } from "./page/Record";
 import { Registration } from "./page/Registration";
 import { Security } from "./page/Security";
-import * as msal from "@azure/msal-browser";
+import { AuthenticationResult } from "@azure/msal-browser";
 import axios from "axios";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -20,7 +20,7 @@ type State = {
 };
 
 export default class App extends React.Component<Props, State> {
-  private readonly handleLogin: (tokenResponse: msal.AuthenticationResult) => void;
+  private readonly handleLogin: (tokenResponse: AuthenticationResult) => void;
 
   constructor(props: Props) {
     super(props);
@@ -30,7 +30,7 @@ export default class App extends React.Component<Props, State> {
       registrationCompleted: false,
     };
 
-    this.handleLogin = async (tokenResponse: msal.AuthenticationResult) => {
+    this.handleLogin = (tokenResponse: AuthenticationResult) => {
       if (tokenResponse.account !== null) {
         this.setState({
           identityToken: tokenResponse.account?.localAccountId,
