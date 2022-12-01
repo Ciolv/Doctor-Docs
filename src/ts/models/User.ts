@@ -1,5 +1,5 @@
 export type User = {
-  id:  string;
+  id: string;
   first_name: string;
   last_name: string;
   street: string;
@@ -8,4 +8,4 @@ export type User = {
   city: string;
   insurance_number: string;
   insurance: string;
-}
+};
