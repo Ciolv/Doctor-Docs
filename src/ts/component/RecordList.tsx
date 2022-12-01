@@ -25,7 +25,6 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   private downloadFile(fileId: string | null, fileName: string | null) {
-    console.log("File");
     if (fileId === null) {
       return;
     }
@@ -80,16 +79,12 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>, nextContext: unknown): boolean {
-    console.log(nextProps.toggleReRender.toString());
-    if (nextState.files !== this.state.files) {
-      return true;
-    }
     if (nextProps.toggleReRender !== this.props.toggleReRender) {
       this.getFiles();
       return false;
     }
-    console.log("no rerender");
-    return false;
+
+    return true;
   }
 
   render() {
@@ -165,9 +160,9 @@ export class RecordList extends React.Component<Props, State> {
     // Send UPDATE request to backend for the specified file
     const id = (e.currentTarget.parentNode?.parentNode?.parentNode as HTMLElement).getAttribute("id");
     const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
-
+    const url = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}`
     axios({
-      url: `http://localhost:8080/files/mark/${id}?value=${!value.toString()}`,
+      url: url,
       method: "GET",
       responseType: "json",
     });

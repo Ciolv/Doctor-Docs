@@ -29,9 +29,7 @@ export class Record extends React.Component<Props, State> {
         const file = inputFiles[0];
         const formData = new FormData();
         formData.set("file", file);
-        axios.post(`http://localhost:8080/files/upload?userId=${this.props.identityToken}`, formData).then((res) => {
-          console.log(res);
-        });
+        axios.post(`http://localhost:8080/files/upload?userId=${this.props.identityToken}`, formData);
       }
     }
   }

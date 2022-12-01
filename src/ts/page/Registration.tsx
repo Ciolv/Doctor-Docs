@@ -33,11 +33,9 @@ export class Registration extends React.Component<Props, State> {
 
   componentDidMount() {
     axios.get(`http://localhost:8080/users/${this.props.identityToken}`).then((response) => {
-      console.log(response);
       if (response.status === 204) {
         return;
       }
-      console.log(`userData: ${response.data}`);
       if (response.data !== null && response.data !== undefined) {
         this.setState(response.data);
       }
@@ -184,7 +182,6 @@ export class Registration extends React.Component<Props, State> {
   }
 
   handleSubmit() {
-    console.log(this.state);
     const user: User = {
       id: this.state.id,
       first_name: this.state.first_name,

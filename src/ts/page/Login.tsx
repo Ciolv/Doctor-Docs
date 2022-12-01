@@ -41,14 +41,12 @@ export class Login extends React.Component<Props, State> {
       this.props.onLogin(tokenResponse);
       return true;
     } catch {
-      console.log("Silent login not possible");
       return false;
     }
   }
 
   async loginPopup() {
     const request = { scopes: ["user.read"] };
-    console.log("popup fallback");
     try {
       const tokenResponse = await msalInstance.acquireTokenPopup(request);
       this.props.onLogin(tokenResponse);

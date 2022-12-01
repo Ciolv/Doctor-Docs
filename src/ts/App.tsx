@@ -31,7 +31,6 @@ export default class App extends React.Component<Props, State> {
     };
 
     this.handleLogin = async (tokenResponse: msal.AuthenticationResult) => {
-      console.log(tokenResponse.account?.localAccountId);
       if (tokenResponse.account !== null) {
         this.setState({
           identityToken: tokenResponse.account?.localAccountId,
@@ -51,9 +50,7 @@ export default class App extends React.Component<Props, State> {
   }
 
   registrationCompleted() {
-    console.log(`http://localhost:8080/users/registrationCompleted/${this.state.identityToken}`);
     axios.get(`http://localhost:8080/users/registrationCompleted/${this.state.identityToken}`).then((response) => {
-      console.log(`registration completed: ${response.data.completed}`);
       if (response.data.completed !== this.state.registrationCompleted) {
         this.setState({ registrationCompleted: response.data.completed });
       }
@@ -111,7 +108,6 @@ export default class App extends React.Component<Props, State> {
   }
 
   handleRegistrationChange() {
-    console.log("reload");
     this.registrationCompleted();
   }
 }
