@@ -5,7 +5,7 @@ import ShareModal from "./ShareModal";
 import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
-import { BsStar, BsStarFill } from "react-icons/bs";
+import { BsDownload, BsStar, BsStarFill } from "react-icons/bs";
 
 type Props = {
   identityToken: string;
@@ -122,7 +122,7 @@ export class RecordList extends React.Component<Props, State> {
             <Col className="file-thumbnail" xs={"1"}>
               IMG
             </Col>
-            <Col className="file-name" xs={"6"} onClick={this.handleDownloadClick}>
+            <Col className="file-name" xs={"6"}>
               {file.name}
             </Col>
             <Col className="file-options" xs={"2"}>
@@ -130,9 +130,12 @@ export class RecordList extends React.Component<Props, State> {
                 <Button
                   value={String(file.marked)}
                   onClick={(e) => this.updateMarked(e)}
-                  style={{ background: "none", border: "none" }}
+                  className={"btn-icon"}
                 >
                   {file.marked ? <BsStarFill className={"star yellow"} /> : <BsStar className={"star"} />}
+                </Button>
+                <Button onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
+                  <BsDownload className={"download"} />
                 </Button>
                 <DeleteModal id={file.id} name={file.name} owner={file.ownerId} />
                 <ShareModal />
@@ -151,9 +154,13 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   private handleDownloadClick(e: React.MouseEvent<HTMLElement, MouseEvent>) {
+    const documentNode = (e.currentTarget.parentElement?.parentElement?.parentElement as HTMLElement);
+    if (documentNode === null) {
+      return;
+    }
     this.downloadFile(
-      (e.currentTarget.parentNode as HTMLElement).getAttribute("id"),
-      (e.currentTarget as HTMLElement).innerText
+      documentNode.getAttribute("id"),
+      (documentNode.getElementsByClassName("file-name")[0] as HTMLElement).innerText
     );
   }
 
