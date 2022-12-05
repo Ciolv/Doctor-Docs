@@ -52,6 +52,7 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   async getFiles() {
+    console.log("lets call ...")
     const getAllFilesURI = `http://localhost:8080/files?userId=${this.props.identityToken}`;
     const result = await axios.get(getAllFilesURI);
 
@@ -135,7 +136,7 @@ export class RecordList extends React.Component<Props, State> {
                   {file.marked ? <BsStarFill className={"star yellow"} /> : <BsStar className={"star"} />}
                 </Button>
                 <DeleteModal id={file.id} name={file.name} owner={file.ownerId} />
-                <ShareModal />
+                <ShareModal id={file.id} name={file.name} owner={file.ownerId} identityToken={this.props.identityToken} permissions={file.users}/>
               </div>
             </Col>
             <Col className="file-size" xs={"1"}>
