@@ -6,6 +6,7 @@ import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
 import { BsDownload, BsStar, BsStarFill } from "react-icons/bs";
+import { getUserAccountId } from "../utils/AuthHelper";
 
 type Props = {
   identityToken: string;
@@ -181,8 +182,9 @@ export class RecordList extends React.Component<Props, State> {
     if (id === null) {
       return;
     }
+    const userId = getUserAccountId();
     const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
-    const url = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}`;
+    const url = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}&userId=${userId}`;
     axios({
       url,
       method: "GET",
