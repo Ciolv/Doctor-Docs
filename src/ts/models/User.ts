@@ -6,6 +6,8 @@ export type User = {
   number: number;
   postcode: number;
   city: string;
-  insurance_number: string;
-  insurance: string;
+  insurance_number?: string;
+  insurance?: string;
+  approbation?: string;
+  verified?: boolean;
 };
