@@ -105,11 +105,7 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
             <Col className="file-options" xs={"2"}>
               <div>
-                <Button
-                  value={String(file.marked)}
-                  onClick={(e) => this.updateMarked(e)}
-                  className={"btn-icon"}
-                >
+                <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)} className={"btn-icon"}>
                   {file.marked ? <BsStarFill className={"star yellow"} /> : <BsStar className={"star"} />}
                 </Button>
                 <Button onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
@@ -121,7 +117,13 @@ export class RecordList extends React.Component<Props, State> {
                   name={file.name}
                   owner={file.ownerId}
                 />
-                <ShareModal id={file.id} name={file.name} owner={file.ownerId} identityToken={this.props.identityToken} permissions={file.users}/>
+                <ShareModal
+                  id={file.id}
+                  name={file.name}
+                  owner={file.ownerId}
+                  identityToken={this.props.identityToken}
+                  permissions={file.users}
+                />
               </div>
             </Col>
             <Col className="file-size" xs={"1"}>
@@ -159,8 +161,7 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   private handleOnSuccess(fileId: string) {
-    const newState = this.state.files.filter((f) => f.id !== fileId);
-    this.setState({ files: newState });
+    this.setState((prevState) => ({ files: prevState.files.filter((f) => f.id !== fileId) }));
   }
 
   private handleDownloadClick(e: React.MouseEvent<HTMLElement, MouseEvent>) {

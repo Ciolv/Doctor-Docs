@@ -18,24 +18,28 @@ export default function ShareModal(props: Props) {
   const [inputValue, setInputValue] = useState("");
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(event.currentTarget?.value);
   }
 
   function deleteDocument() {
-    axios.get(`http://localhost:8080/files/delete/${props.id}`).then((response) => {
-      if (response.status === 200) {
-        props.onSuccess(props.id);
-        handleClose();
-      } else {
-        return (
-          <Alert key={"danger"} variant={"danger"}>
-            Could not delete Document
-          </Alert>
-        );
-      }
-    });
+    axios
+      .get(`http://localhost:8080/files/delete/${props.id}`)
+      .then((response) => {
+        console.log(response.status);
+        if (response.status === 200) {
+          setShowAlert(false);
+          props.onSuccess(props.id);
+          handleClose();
+        } else {
+          setShowAlert(true);
+        }
+      })
+      .catch(() => {
+        setShowAlert(true);
+      });
   }
 
   const secureWord = props.name.split(/[._ -]/)[0];
@@ -51,6 +55,11 @@ export default function ShareModal(props: Props) {
           <Modal.Title>Löschen</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {showAlert && (
+            <Alert key={"danger"} variant={"danger"}>
+              Could not delete document
+            </Alert>
+          )}
           Falls Sie &quot;{props.name}&quot; wirklich löschen möchten, geben Sie bitte <b>{secureWord}</b> ein:
           <Form>
             <Form.Group className="mb-3" controlId="formBasicGivenName">
