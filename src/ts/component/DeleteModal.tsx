@@ -5,6 +5,7 @@ import "../../css/ShareModal.scss";
 import { Alert, Form } from "react-bootstrap";
 import axios from "axios";
 import { BsTrash } from "react-icons/bs";
+import { getUserAccountId } from "../utils/AuthHelper";
 
 type Props = {
   id: string;
@@ -25,10 +26,13 @@ export default function ShareModal(props: Props) {
   }
 
   function deleteDocument() {
+    const userId = getUserAccountId();
+    console.log(userId);
+    const uri = `http://localhost:8080/files/delete/${props.id}?userId=${userId}`;
+    console.log(uri);
     axios
-      .get(`http://localhost:8080/files/delete/${props.id}`)
+      .get(uri)
       .then((response) => {
-        console.log(response.status);
         if (response.status === 200) {
           setShowAlert(false);
           props.onSuccess(props.id);

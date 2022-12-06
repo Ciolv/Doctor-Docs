@@ -69,10 +69,10 @@ export default class App extends React.Component<Props, State> {
               <Route path="/" element={<Navigate replace to="/home" />} />
               <Route path="/home" element={<Home />} />
               <Route path="/record">
-                <Route index element={<Record identityToken={this.state.identityToken} />} />
-                <Route path="newest" element={<Record identityToken={this.state.identityToken} />} />
-                <Route path="marked" element={<Record identityToken={this.state.identityToken} />} />
-                <Route path="shared" element={<Record identityToken={this.state.identityToken} />} />
+                <Route index element={<Record userId={this.state.identityToken} />} />
+                <Route path="newest" element={<Record userId={this.state.identityToken} />} />
+                <Route path="marked" element={<Record userId={this.state.identityToken} />} />
+                <Route path="shared" element={<Record userId={this.state.identityToken} />} />
               </Route>
               <Route path="/for-me" element={<Registration identityToken={this.state.identityToken} />} />
               <Route path="/security" element={<Security />} />

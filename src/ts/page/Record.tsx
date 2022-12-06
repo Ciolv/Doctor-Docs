@@ -8,7 +8,7 @@ import { IoAddCircle } from "react-icons/io5";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
-  identityToken: string;
+  userId: string;
 };
 // eslint-disable-next-line @typescript-eslint/ban-types
 type State = {
@@ -39,7 +39,7 @@ export class Record extends React.Component<Props, State> {
             </div>
             <RecordList
               toggleReRender={this.state.rerender}
-              identityToken={this.props.identityToken}
+              identityToken={this.props.userId}
               view={window.location.href.split("/").slice(-1)[0]}
             />
           </Col>
@@ -62,7 +62,7 @@ export class Record extends React.Component<Props, State> {
         const file = inputFiles[0];
         const formData = new FormData();
         formData.set("file", file);
-        axios.post(`http://localhost:8080/files/upload?userId=${this.props.identityToken}`, formData);
+        axios.post(`http://localhost:8080/files/upload?userId=${this.props.userId}`, formData);
       }
     }
   }
