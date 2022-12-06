@@ -87,7 +87,7 @@ export class RecordList extends React.Component<Props, State> {
     return (
       <Container fluid className="record-list">
         {(this.props.role === "DOCTOR_UNVERIFIED")?
-          <Alert show={this.state.showAlert} dismissible={true} onClick={() => {this.setState({showAlert: false})}}>
+          <Alert show={this.state.showAlert} dismissible onClick={() => {this.setState({showAlert: false})}}>
             Da Ihre Verifizierung noch aussteht, können Sie noch keine Dokumente mit Patient:innen teilen.
           </Alert> : ""}
         <Row className="file-record file-record-headline">
