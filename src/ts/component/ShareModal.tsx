@@ -6,14 +6,7 @@ import "../../css/ShareModal.scss";
 import { BsPlusLg, BsShare, BsTrash } from "react-icons/bs";
 import { Form } from "react-bootstrap";
 import axios from "axios";
-
-type doc = {
-    "id": number;
-    "name": string;
-    "street": string;
-    "plz": number;
-    "city": string;
-}
+import { User } from "../models/User";
 
 type Props = {
   id: string;
@@ -21,6 +14,7 @@ type Props = {
   owner: string;
   identityToken: string;
   permissions: UserPermission[];
+  role: "DOCTOR" | "PATIENT";
 };
 
 type UserPermission = {
@@ -33,17 +27,17 @@ type DocActions = {
   action: "ADD" | "DELETE";
 }
 
-const mockData: doc[] = [];
+const mockData: User[] = [];
 const checkMock: DocActions[] = [];
 
 export default function ShareModal(props: Props) {
   function getPermissions() {
-    const permittedDocs: doc[] = []
+    const permittedDocs: User[] = []
     props.permissions.forEach((doc) => {
       if (doc.permission === 1 && doc.userId !== null && doc.userId !== undefined) {
         console.log(`Lets call for http://localhost:8080/doctors/data/${doc.userId}`)
         axios.get(`http://localhost:8080/doctors/data/${doc.userId}`).then((docMeta) => {
-          const currentDoc: doc = {id: docMeta.data.id, name: docMeta.data.name, street: docMeta.data.street, plz: docMeta.data.plz, city: docMeta.data.city}
+          const currentDoc: User = {id: docMeta.data.id, first_name: docMeta.data.first_name, last_name: docMeta.data.last_name, number: docMeta.data.last_name, street: docMeta.data.street, postcode: docMeta.data.postcode, city: docMeta.data.city}
           permittedDocs.push(currentDoc);
         });
       }
@@ -74,9 +68,10 @@ export default function ShareModal(props: Props) {
 
 
 
-  function addPermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
+  function addPermission(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     const n_docsActions = docsActions;
-    const id = (event.currentTarget as HTMLElement).id;
+    const id = event.currentTarget.id;
+    console.log("ID is ..."+id);
     n_docsActions.push({docId: id, action: "ADD"});
 
     const selectedDoc = docs.find((element) => {return (String(element.id) === id)});
@@ -137,11 +132,11 @@ export default function ShareModal(props: Props) {
               <div key={record.id} className={"permittedDoc"}>
                 <div style={{"display": "inline-block"}}>
                   <b>
-                  {record.name}
+                  {record.first_name} {record.last_name}
                   </b>
                   <br />
                   <span>
-                  {record.street}, {record.plz} {record.city}
+                  {record.street} {record.number}, {record.postcode} {record.city}
                   </span>
                 </div>
                 <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
@@ -163,16 +158,16 @@ export default function ShareModal(props: Props) {
             <div key={record.id} className={"permittedDoc"}>
               <div style={{"display": "inline-block"}}>
                 <b>
-                  {record.name}
+                  {record.first_name} {record.last_name}
                 </b>
                 <br />
                 <span>
-            {record.street}, {record.plz} {record.city}
-            </span>
+                  {record.street} {record.number}, {record.postcode} {record.city}
+                </span>
               </div>
-              <Button className={"btn-add"} id={String(record.id)} onClick={addPermission}>
+              <button className={"btn-add"} id={String(record.id)} onClick={addPermission}>
                 <BsPlusLg className={"trashcan no-margin"}></BsPlusLg>
-              </Button>
+              </button>
             </div>
           ))}
         </Modal.Body>
