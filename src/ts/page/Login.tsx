@@ -1,7 +1,8 @@
 import * as React from "react";
-import { AuthenticationResult, PublicClientApplication, AccountInfo } from "@azure/msal-browser";
+import { AuthenticationResult, PublicClientApplication } from "@azure/msal-browser";
 import { Navigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
+import { getToken, msalConfig } from "../utils/AuthHelper";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
@@ -12,35 +13,27 @@ type State = {
   loginError: boolean;
 };
 
-const msalConfig = {
-  auth: {
-    clientId: "49e6fa71-9a2c-465e-a3bc-8ba2f15bad61",
-    redirectUri: "http://localhost:3000/home",
-  },
-};
-
 const msalInstance = new PublicClientApplication(msalConfig);
 
 export class Login extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const accounts = msalInstance.getAllAccounts();
-    if (accounts.length > 0) {
-      this.testSilentLogin(accounts[0]);
-    }
+    this.testSilentLogin();
     this.state = {
       loginRedirect: false,
       loginError: false,
     };
   }
 
-  async testSilentLogin(account: AccountInfo) {
+  async testSilentLogin() {
     // skipcq: JS-0240
-    const request = { scopes: ["user.read"], account: account, forceRefresh: false };
     try {
-      const tokenResponse = await msalInstance.acquireTokenSilent(request);
-      this.props.onLogin(tokenResponse);
-      return true;
+      const tokenResponse = await getToken();
+      if (tokenResponse) {
+        this.props.onLogin(tokenResponse);
+        return true;
+      }
+      return false;
     } catch {
       return false;
     }
