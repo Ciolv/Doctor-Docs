@@ -1,5 +1,4 @@
-import React from "react";
-import {useState} from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../css/ShareModal.scss";
@@ -11,6 +10,7 @@ type Props = {
   id: string;
   name: string;
   owner: string;
+  onSuccess: (id: string) => void;
 };
 
 export default function ShareModal(props: Props) {
@@ -24,20 +24,18 @@ export default function ShareModal(props: Props) {
   }
 
   function deleteDocument() {
-    axios.get(`http://localhost:8080/files/delete/${props.id}`).
-    then((response) => {
+    axios.get(`http://localhost:8080/files/delete/${props.id}`).then((response) => {
       if (response.status === 200) {
+        props.onSuccess(props.id);
         handleClose();
-      }
-      else {
+      } else {
         return (
           <Alert key={"danger"} variant={"danger"}>
             Could not delete Document
           </Alert>
-        )
+        );
       }
     });
-
   }
 
   const secureWord = props.name.split(/[._ -]/)[0];
@@ -45,11 +43,11 @@ export default function ShareModal(props: Props) {
   return (
     <>
       <Button style={{ background: "none", border: "none" }} onClick={handleShow}>
-        <BsTrash className={"trashcan"}/>
+        <BsTrash className={"trashcan"} />
       </Button>
 
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton >
+        <Modal.Header closeButton>
           <Modal.Title>Löschen</Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -57,7 +55,7 @@ export default function ShareModal(props: Props) {
           <Form>
             <Form.Group className="mb-3" controlId="formBasicGivenName">
               <Form.Label></Form.Label>
-              <Form.Control type="Text" placeholder="Sicherheitswort" value={inputValue} onChange={handleChange}/>
+              <Form.Control type="Text" placeholder="Sicherheitswort" value={inputValue} onChange={handleChange} />
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -65,16 +63,15 @@ export default function ShareModal(props: Props) {
           <Button variant="secondary" onClick={handleClose}>
             Abbrechen
           </Button>
-          {(inputValue === secureWord)?
+          {inputValue === secureWord ? (
             <Button variant="danger" onClick={deleteDocument}>
               Unwiderruflich löschen
             </Button>
-            :
-            <Button variant="danger" disabled >
+          ) : (
+            <Button variant="danger" disabled>
               Unwiderruflich löschen
             </Button>
-          }
-
+          )}
         </Modal.Footer>
       </Modal>
     </>

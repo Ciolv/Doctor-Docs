@@ -25,28 +25,6 @@ export class RecordList extends React.Component<Props, State> {
     };
   }
 
-  private downloadFile(fileId: string | null, fileName: string | null) {
-    if (fileId === null) {
-      return;
-    }
-    axios({
-      url: `http://localhost:8080/files/${fileId}?userId=${this.props.identityToken}`,
-      method: "GET",
-      responseType: "blob",
-    }).then((response) => {
-      const url = URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      if (typeof fileName === "string") {
-        link.setAttribute("download", fileName);
-      }
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    });
-  }
-
   componentDidMount() {
     this.getFiles();
   }
@@ -127,17 +105,18 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
             <Col className="file-options" xs={"2"}>
               <div>
-                <Button
-                  value={String(file.marked)}
-                  onClick={(e) => this.updateMarked(e)}
-                  className={"btn-icon"}
-                >
+                <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)} className={"btn-icon"}>
                   {file.marked ? <BsStarFill className={"star yellow"} /> : <BsStar className={"star"} />}
                 </Button>
                 <Button onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
                   <BsDownload className={"download"} />
                 </Button>
-                <DeleteModal id={file.id} name={file.name} owner={file.ownerId} />
+                <DeleteModal
+                  onSuccess={(id) => this.handleOnSuccess(id)}
+                  id={file.id}
+                  name={file.name}
+                  owner={file.ownerId}
+                />
                 <ShareModal />
               </div>
             </Col>
@@ -153,8 +132,35 @@ export class RecordList extends React.Component<Props, State> {
     );
   }
 
+  private downloadFile(fileId: string | null, fileName: string | null) {
+    if (fileId === null) {
+      return;
+    }
+    axios({
+      url: `http://localhost:8080/files/${fileId}?userId=${this.props.identityToken}`,
+      method: "GET",
+      responseType: "blob",
+    }).then((response) => {
+      const url = URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      if (typeof fileName === "string") {
+        link.setAttribute("download", fileName);
+      }
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  private handleOnSuccess(fileId: string) {
+    const newState = this.state.files.filter((f) => f.id !== fileId);
+    this.setState({ files: newState });
+  }
+
   private handleDownloadClick(e: React.MouseEvent<HTMLElement, MouseEvent>) {
-    const documentNode = (e.currentTarget.parentElement?.parentElement?.parentElement as HTMLElement);
+    const documentNode = e.currentTarget.parentElement?.parentElement?.parentElement as HTMLElement;
     if (documentNode === null) {
       return;
     }
@@ -182,7 +188,6 @@ export class RecordList extends React.Component<Props, State> {
     const files_mod = this.state.files;
 
     if (file) {
-      this.state.files.indexOf(file);
       files_mod[this.state.files.indexOf(file)] = new File(
         file.id,
         file.name,
