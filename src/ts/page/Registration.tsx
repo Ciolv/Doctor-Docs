@@ -20,7 +20,6 @@ export class Registration extends React.Component<Props, User> {
       insurance: "",
       insurance_number: "",
       approbation: "",
-      verified: false,
       last_name: "",
       number: 0,
       postcode: 0,
