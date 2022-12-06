@@ -32,7 +32,7 @@ export class Record extends React.Component<Props, State> {
 
   private async getRole() {
     let userData: User;
-    await axios.get(`http://localhost:8080/users/${this.props.identityToken}`).then(
+    await axios.get(`http://localhost:8080/users/${this.props.userId}`).then(
       (result: AxiosResponse<User>) => {
         userData = result.data;
         if (userData.approbation !== "") {
