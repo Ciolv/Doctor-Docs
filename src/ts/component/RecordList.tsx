@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 import "../../css/RecordList.scss";
 import ShareModal from "./ShareModal";
 import DeleteModal from "./DeleteModal";
@@ -9,11 +9,13 @@ import { BsDownload, BsStar, BsStarFill } from "react-icons/bs";
 
 type Props = {
   identityToken: string;
+  role: "PATIENT" | "DOCTOR" | "DOCTOR_UNVERIFIED";
   view: string;
   toggleReRender: boolean;
 };
 type State = {
   files: File[];
+  showAlert?: boolean;
 };
 
 export class RecordList extends React.Component<Props, State> {
@@ -22,6 +24,7 @@ export class RecordList extends React.Component<Props, State> {
 
     this.state = {
       files: [],
+      showAlert: true
     };
   }
 
@@ -95,7 +98,7 @@ export class RecordList extends React.Component<Props, State> {
     this.state.files.forEach((file) => {
       if (
         this.props.view === "record" ||
-        this.props.view === "shared" ||
+        (this.props.view === "shared" && file.users.length > 2) ||
         (this.props.view === "marked" && file.marked) ||
         (this.props.view === "newest" && file.lastUpdateTime.getDate() > new Date().getDate() - 8)
       ) {
@@ -105,6 +108,10 @@ export class RecordList extends React.Component<Props, State> {
 
     return (
       <Container fluid className="record-list">
+        {(this.props.role === "DOCTOR_UNVERIFIED")?
+          <Alert show={this.state.showAlert} dismissible={true} onClick={() => {this.setState({showAlert: false})}}>
+            Da Ihre Verifizierung noch aussteht, können Sie noch keine Dokumente mit Patient:innen teilen.
+          </Alert> : ""}
         <Row className="file-record file-record-headline">
           <Col className="file-thumbnail" xs={"1"}></Col>
           <Col className="file-name" xs={"8"}>
@@ -139,7 +146,9 @@ export class RecordList extends React.Component<Props, State> {
                   <BsDownload className={"download"} />
                 </Button>
                 <DeleteModal id={file.id} name={file.name} owner={file.ownerId} />
-                <ShareModal id={file.id} name={file.name} owner={file.ownerId} identityToken={this.props.identityToken} permissions={file.users}/>
+                {(this.props.role === "PATIENT" || this.props.role === "DOCTOR")?
+                  <ShareModal id={file.id} name={file.name} owner={file.ownerId} identityToken={this.props.identityToken} permissions={file.users} role={this.props.role}/>
+                  : ""}
               </div>
             </Col>
             <Col className="file-size" xs={"1"}>

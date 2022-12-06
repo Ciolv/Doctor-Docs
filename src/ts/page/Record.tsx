@@ -3,8 +3,9 @@ import { Col, Container, Row } from "react-bootstrap";
 import { RecordNav } from "../component/RecordNav";
 import "../../css/Record.scss";
 import { RecordList } from "../component/RecordList";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { IoAddCircle } from "react-icons/io5";
+import { User } from "../models/User";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
@@ -12,15 +13,41 @@ type Props = {
 };
 // eslint-disable-next-line @typescript-eslint/ban-types
 type State = {
-  rerender: boolean
+  rerender: boolean,
+  role: "PATIENT" | "DOCTOR_UNVERIFIED" | "DOCTOR"
 };
 
 export class Record extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      rerender: false
+      rerender: false,
+      role: "PATIENT"
     }
+  }
+
+  componentDidMount() {
+    this.getRole();
+  }
+
+  private async getRole() {
+    let userData: User;
+    await axios.get(`http://localhost:8080/users/${this.props.identityToken}`).then(
+      (result: AxiosResponse<User>) => {
+        userData = result.data;
+        if (userData.approbation !== "") {
+          if (userData.verified === true) {
+            this.setState({role: "DOCTOR"});
+          }
+          else {
+            this.setState({role: "DOCTOR_UNVERIFIED"});
+          }
+        }
+        else {
+          this.setState({role: "PATIENT"});
+        }
+
+      });
   }
 
   private postFile(inputFiles: FileList | null) {
@@ -48,7 +75,7 @@ export class Record extends React.Component<Props, State> {
                 <IoAddCircle />
               </label>
             </div>
-            <RecordList toggleReRender={this.state.rerender} identityToken={this.props.identityToken} view={(window.location.href).split("/").slice(-1)[0]}/>
+            <RecordList toggleReRender={this.state.rerender} role={this.state.role} identityToken={this.props.identityToken} view={(window.location.href).split("/").slice(-1)[0]}/>
           </Col>
         </Row>
       </Container>
