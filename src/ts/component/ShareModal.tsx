@@ -78,13 +78,14 @@ export default function ShareModal(props: Props) {
     n_docsActions.push({docId: id, action: "ADD"});
 
     const selectedDoc = docs.find((element) => {return (String(element.id) === id)});
-
     const n_permissions = permissions;
-    if (selectedDoc !== undefined) {
+
+    const isAlreadyPermitted = permissions.find((element) => {return (String(element.id) === id)});
+    if ((selectedDoc !== undefined) && !isAlreadyPermitted) {
       n_permissions.push(selectedDoc);
     }
-    setPermissions(n_permissions);
-    setDocsActions(n_docsActions);
+    setPermissions([...n_permissions]);
+    setDocsActions([...n_docsActions]);
   }
 
   function removePermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
@@ -102,8 +103,8 @@ export default function ShareModal(props: Props) {
       n_permissions.splice(permissions.indexOf(selectedDoc), 1);
       console.log(n_permissions);
     }
-    setPermissions(n_permissions);
-    setDocsActions(n_docsActions);
+    setPermissions([...n_permissions]);
+    setDocsActions([...n_docsActions]);
   }
 
   function docSearch(event: React.ChangeEvent<HTMLInputElement>) {
