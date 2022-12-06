@@ -74,7 +74,7 @@ export default class App extends React.Component<Props, State> {
                 <Route path="marked" element={<Record identityToken={this.state.identityToken} />} />
                 <Route path="shared" element={<Record identityToken={this.state.identityToken} />} />
               </Route>
-              <Route path="/for-me" element={<Registration identityToken={this.state.identityToken} />} />
+              <Route path="/for-me" element={<Registration identityToken={this.state.identityToken} registrationCompleted={this.state.registrationCompleted}/>} />
               <Route path="/security" element={<Security />} />
               <Route path={"/login"} element={<Login onLogin={this.handleLogin} />} />
             </Routes>
