@@ -3,31 +3,122 @@ import {useState} from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../css/ShareModal.scss";
-import { BsShare } from "react-icons/bs";
+import { BsPlusLg, BsShare, BsTrash } from "react-icons/bs";
 import { Form } from "react-bootstrap";
 import axios from "axios";
 
-const mockData = [
-  {"id": 1, "name": "Eine Ärztin Ihres Vertrauens", "street": "Musterstraße 42", "plz": "20120", "city": "Glückstadt"},
-]
+type doc = {
+    "id": number;
+    "name": string;
+    "street": string;
+    "plz": number;
+    "city": string;
+}
 
-export default function ShareModal() {
+type Props = {
+  id: string;
+  name: string;
+  owner: string;
+  identityToken: string;
+  permissions: UserPermission[];
+};
+
+type UserPermission = {
+  userId: string;
+  permission: number;
+}
+
+type DocActions = {
+  docId: string;
+  action: "ADD" | "DELETE";
+}
+
+const mockData: doc[] = [];
+const checkMock: DocActions[] = [];
+
+export default function ShareModal(props: Props) {
+  function getPermissions() {
+    const permittedDocs: doc[] = []
+    props.permissions.forEach((doc) => {
+      if (doc.permission === 1 && doc.userId !== null && doc.userId !== undefined) {
+        console.log(`Lets call for http://localhost:8080/doctors/data/${doc.userId}`)
+        axios.get(`http://localhost:8080/doctors/data/${doc.userId}`).then((docMeta) => {
+          const currentDoc: doc = {id: docMeta.data.id, name: docMeta.data.name, street: docMeta.data.street, plz: docMeta.data.plz, city: docMeta.data.city}
+          permittedDocs.push(currentDoc);
+        });
+      }
+    });
+    return permittedDocs;
+  }
+
   const [show, setShow] = useState(false);
+  const [permissions, setPermissions] = useState(() => getPermissions());
   const [inputValue, setInputValue] = useState("");
-  const [docs, setDocs] = useState(mockData)
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [docsActions, setDocsActions] = useState(checkMock);
+  const [docs, setDocs] = useState(mockData);
 
+  const handleShow = () => {setShow(true)};
+  const handleClose = () => {setShow(false)};
+
+  function handlePermit() {
+    setShow(false);
+    if (docsActions.length > 0) {
+      docsActions.forEach((permission) => {
+        axios.post(`http://localhost:8080/files/permit/${props.id}/`, {userId: permission.docId, action: permission.action})
+          .then((response) => {
+            console.log(response);
+          });
+      })
+    }
+  }
+
+
+
+  function addPermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
+    const n_docsActions = docsActions;
+    const id = (event.currentTarget as HTMLElement).id;
+    n_docsActions.push({docId: id, action: "ADD"});
+
+    const selectedDoc = docs.find((element) => {return (String(element.id) === id)});
+    const n_permissions = permissions;
+
+    const isAlreadyPermitted = permissions.find((element) => {return (String(element.id) === id)});
+    if ((selectedDoc !== undefined) && !isAlreadyPermitted) {
+      n_permissions.push(selectedDoc);
+    }
+    setPermissions([...n_permissions]);
+    setDocsActions([...n_docsActions]);
+  }
+
+  function removePermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
+    const n_docsActions = docsActions;
+    const id = (event.currentTarget as HTMLElement).id;
+    n_docsActions.push({docId: id, action: "DELETE"});
+
+    const selectedDoc = permissions.find((element) => {return (String(element.id) === id)});
+    console.log(selectedDoc);
+    const n_permissions = permissions;
+    if (selectedDoc !== undefined) {
+      console.log(n_permissions);
+      console.log(`Going to delete element ${permissions.indexOf(selectedDoc)}`)
+
+      n_permissions.splice(permissions.indexOf(selectedDoc), 1);
+      console.log(n_permissions);
+    }
+    setPermissions([...n_permissions]);
+    setDocsActions([...n_docsActions]);
+  }
 
   function docSearch(event: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(event.target.value);
-    axios.get(`http://localhost:8080/doctors/${event.target.value}`).
-    then((response) => {
-      const doctors = response.data;
-      setDocs(doctors);
-    });
+    if (event.target.value !== "" && event.target.value !== undefined) {
+      axios.get(`http://localhost:8080/doctors/${event.target.value}`).
+      then((response) => {
+        const doctors = response.data;
+        setDocs(doctors);
+      });
+    }
   }
-
 
   return (
     <>
@@ -40,39 +131,56 @@ export default function ShareModal() {
           <Modal.Title>Freigeben</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Wählen Sie die Ärztin / den Arzt Ihres Vertrauens aus und geben Sie Ihr Dokument frei:
+          <b>{props.name}</b> ist für folgende Behandler:innen freigegeben:
+          <div>
+            {permissions.map((record) => (
+              <div key={record.id} className={"permittedDoc"}>
+                <div style={{"display": "inline-block"}}>
+                  <b>
+                  {record.name}
+                  </b>
+                  <br />
+                  <span>
+                  {record.street}, {record.plz} {record.city}
+                  </span>
+                </div>
+                <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
+                  <BsTrash className={"trashcan no-margin"}></BsTrash>
+                </Button>
+              </div>
+            ))}
+
+          </div>
+          <br/>
+          Weitere Freigaben hinzufügen:
           <Form>
             <Form.Group className="mb-3" controlId="formBasicGivenName">
               <Form.Label></Form.Label>
-              <Form.Control type="Text" placeholder="Arzt/Ärztin" value={inputValue} onChange={docSearch}/>
+              <Form.Control type="Text" placeholder="Behandler:in suchen ..." value={inputValue} onChange={docSearch}/>
             </Form.Group>
           </Form>
-          <Form>
           {docs.map((record) => (
-            <Form.Check key={record.id}
-              type={"checkbox"}
-              id={String(record.id)}
-              label=
-                {
-                  <div>
-                    <b>
-                      {record.name}
-                    </b>
-                    <br />
-                    <span>
-                    {record.street}, {record.plz} {record.city}
-                  </span>
-                  </div>
-                }
-            />
+            <div key={record.id} className={"permittedDoc"}>
+              <div style={{"display": "inline-block"}}>
+                <b>
+                  {record.name}
+                </b>
+                <br />
+                <span>
+            {record.street}, {record.plz} {record.city}
+            </span>
+              </div>
+              <Button className={"btn-add"} id={String(record.id)} onClick={addPermission}>
+                <BsPlusLg className={"trashcan no-margin"}></BsPlusLg>
+              </Button>
+            </div>
           ))}
-          </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Abbrechen
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" onClick={handlePermit}>
             Freigeben
           </Button>
         </Modal.Footer>
