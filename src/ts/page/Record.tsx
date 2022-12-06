@@ -9,7 +9,7 @@ import { User } from "../models/User";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
-  identityToken: string
+  userId: string;
 };
 // eslint-disable-next-line @typescript-eslint/ban-types
 type State = {
@@ -50,17 +50,6 @@ export class Record extends React.Component<Props, State> {
       });
   }
 
-  private postFile(inputFiles: FileList | null) {
-    if (inputFiles !== null) {
-      if (inputFiles.length !== 0) {
-        const file = inputFiles[0];
-        const formData = new FormData();
-        formData.set("file", file);
-        axios.post(`http://localhost:8080/files/upload?userId=${this.props.identityToken}`, formData);
-      }
-    }
-  }
-
   render() {
     return (
       <Container fluid>
@@ -75,7 +64,12 @@ export class Record extends React.Component<Props, State> {
                 <IoAddCircle />
               </label>
             </div>
-            <RecordList toggleReRender={this.state.rerender} role={this.state.role} identityToken={this.props.identityToken} view={(window.location.href).split("/").slice(-1)[0]}/>
+            <RecordList
+              toggleReRender={this.state.rerender}
+              identityToken={this.props.userId}
+              role={this.state.role}
+              view={window.location.href.split("/").slice(-1)[0]}
+            />
           </Col>
         </Row>
       </Container>
@@ -85,8 +79,19 @@ export class Record extends React.Component<Props, State> {
   handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = (e.target as EventTarget & HTMLInputElement).files;
     this.postFile(files);
-    this.setState(prevState => ({
-      rerender: !prevState.rerender
-                  }));
+    this.setState((prevState) => ({
+      rerender: !prevState.rerender,
+    }));
+  }
+
+  private postFile(inputFiles: FileList | null) {
+    if (inputFiles !== null) {
+      if (inputFiles.length !== 0) {
+        const file = inputFiles[0];
+        const formData = new FormData();
+        formData.set("file", file);
+        axios.post(`http://localhost:8080/files/upload?userId=${this.props.userId}`, formData);
+      }
+    }
   }
 }

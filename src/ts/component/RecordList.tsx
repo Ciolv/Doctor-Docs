@@ -6,6 +6,7 @@ import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
 import { BsDownload, BsStar, BsStarFill } from "react-icons/bs";
+import { getUserAccountId } from "../utils/AuthHelper";
 
 type Props = {
   identityToken: string;
@@ -28,34 +29,11 @@ export class RecordList extends React.Component<Props, State> {
     };
   }
 
-  private downloadFile(fileId: string | null, fileName: string | null) {
-    if (fileId === null) {
-      return;
-    }
-    axios({
-      url: `http://localhost:8080/files/${fileId}?userId=${this.props.identityToken}`,
-      method: "GET",
-      responseType: "blob",
-    }).then((response) => {
-      const url = URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      if (typeof fileName === "string") {
-        link.setAttribute("download", fileName);
-      }
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    });
-  }
-
   componentDidMount() {
     this.getFiles();
   }
 
   async getFiles() {
-    console.log("lets call ...")
     const getAllFilesURI = `http://localhost:8080/files?userId=${this.props.identityToken}`;
     const result = await axios.get(getAllFilesURI);
 
@@ -135,19 +113,27 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
             <Col className="file-options" xs={"2"}>
               <div>
-                <Button
-                  value={String(file.marked)}
-                  onClick={(e) => this.updateMarked(e)}
-                  className={"btn-icon"}
-                >
+                <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)} className={"btn-icon"}>
                   {file.marked ? <BsStarFill className={"star yellow"} /> : <BsStar className={"star"} />}
                 </Button>
                 <Button onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
                   <BsDownload className={"download"} />
                 </Button>
-                <DeleteModal id={file.id} name={file.name} owner={file.ownerId} />
+                <DeleteModal
+                  onSuccess={(id) => this.handleOnSuccess(id)}
+                  id={file.id}
+                  name={file.name}
+                  owner={file.ownerId}
+                />
                 {(this.props.role === "PATIENT" || this.props.role === "DOCTOR")?
-                  <ShareModal id={file.id} name={file.name} owner={file.ownerId} identityToken={this.props.identityToken} permissions={file.users} role={this.props.role}/>
+                  <ShareModal
+                    id={file.id}
+                    name={file.name}
+                    owner={file.ownerId}
+                    identityToken={this.props.identityToken}
+                    permissions={file.users}
+                    role={this.props.role}
+                  />
                   : ""}
               </div>
             </Col>
@@ -163,8 +149,34 @@ export class RecordList extends React.Component<Props, State> {
     );
   }
 
+  private downloadFile(fileId: string | null, fileName: string | null) {
+    if (fileId === null) {
+      return;
+    }
+    axios({
+      url: `http://localhost:8080/files/${fileId}?userId=${this.props.identityToken}`,
+      method: "GET",
+      responseType: "blob",
+    }).then((response) => {
+      const url = URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      if (typeof fileName === "string") {
+        link.setAttribute("download", fileName);
+      }
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  private handleOnSuccess(fileId: string) {
+    this.setState((prevState) => ({ files: prevState.files.filter((f) => f.id !== fileId) }));
+  }
+
   private handleDownloadClick(e: React.MouseEvent<HTMLElement, MouseEvent>) {
-    const documentNode = (e.currentTarget.parentElement?.parentElement?.parentElement as HTMLElement);
+    const documentNode = e.currentTarget.parentElement?.parentElement?.parentElement as HTMLElement;
     if (documentNode === null) {
       return;
     }
@@ -180,8 +192,9 @@ export class RecordList extends React.Component<Props, State> {
     if (id === null) {
       return;
     }
+    const userId = getUserAccountId();
     const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
-    const url = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}`;
+    const url = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}&userId=${userId}`;
     axios({
       url,
       method: "GET",
@@ -192,7 +205,6 @@ export class RecordList extends React.Component<Props, State> {
     const files_mod = this.state.files;
 
     if (file) {
-      this.state.files.indexOf(file);
       files_mod[this.state.files.indexOf(file)] = new File(
         file.id,
         file.name,
