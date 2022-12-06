@@ -37,6 +37,20 @@ const mockData: doc[] = [];
 const checkMock: DocActions[] = [];
 
 export default function ShareModal(props: Props) {
+  function getPermissions() {
+    const permittedDocs: doc[] = []
+    props.permissions.forEach((doc) => {
+      if (doc.permission === 1 && doc.userId !== null && doc.userId !== undefined) {
+        console.log(`Lets call for http://localhost:8080/doctors/data/${doc.userId}`)
+        axios.get(`http://localhost:8080/doctors/data/${doc.userId}`).then((docMeta) => {
+          const currentDoc: doc = {id: docMeta.data.id, name: docMeta.data.name, street: docMeta.data.street, plz: docMeta.data.plz, city: docMeta.data.city}
+          permittedDocs.push(currentDoc);
+        });
+      }
+    });
+    return permittedDocs;
+  }
+
   const [show, setShow] = useState(false);
   const [permissions, setPermissions] = useState(() => getPermissions());
   const [inputValue, setInputValue] = useState("");
@@ -58,19 +72,7 @@ export default function ShareModal(props: Props) {
     }
   }
 
-  function getPermissions() {
-    const permittedDocs: doc[] = []
-    props.permissions.forEach((doc) => {
-      if (doc.permission === 1 && doc.userId !== null && doc.userId !== undefined) {
-        console.log(`Lets call for http://localhost:8080/doctors/data/${doc.userId}`)
-        axios.get(`http://localhost:8080/doctors/data/${doc.userId}`).then((docMeta) => {
-          const currentDoc: doc = {id: docMeta.data.id, name: docMeta.data.name, street: docMeta.data.street, plz: docMeta.data.plz, city: docMeta.data.city}
-          permittedDocs.push(currentDoc);
-        });
-      }
-    });
-    return permittedDocs;
-  }
+
 
   function addPermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
     const n_docsActions = docsActions;
@@ -142,9 +144,9 @@ export default function ShareModal(props: Props) {
                   {record.street}, {record.plz} {record.city}
                   </span>
                 </div>
-                <button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
+                <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
                   <BsTrash className={"trashcan no-margin"}></BsTrash>
-                </button>
+                </Button>
               </div>
             ))}
 
@@ -168,9 +170,9 @@ export default function ShareModal(props: Props) {
             {record.street}, {record.plz} {record.city}
             </span>
               </div>
-              <button className={"btn-add"} id={String(record.id)} onClick={addPermission}>
+              <Button className={"btn-add"} id={String(record.id)} onClick={addPermission}>
                 <BsPlusLg className={"trashcan no-margin"}></BsPlusLg>
-              </button>
+              </Button>
             </div>
           ))}
         </Modal.Body>
