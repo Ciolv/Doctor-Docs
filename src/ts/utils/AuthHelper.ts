@@ -28,7 +28,12 @@ export function getUserAccountId(): string {
   return "";
 }
 
-export async function getToken(): Promise<AuthenticationResult | null> {
+export async function getIdToken() {
+  const account = await getTokenResponse();
+  return account?.idToken;
+}
+
+export async function getTokenResponse(): Promise<AuthenticationResult | null> {
   const account = getUserAccount();
   if (account) {
     // skipcq: JS-0240

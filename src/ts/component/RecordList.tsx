@@ -6,7 +6,7 @@ import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
 import { BsDownload, BsStar, BsStarFill } from "react-icons/bs";
-import { getUserAccountId } from "../utils/AuthHelper";
+import { getIdToken } from "../utils/AuthHelper";
 
 type Props = {
   identityToken: string;
@@ -25,7 +25,7 @@ export class RecordList extends React.Component<Props, State> {
 
     this.state = {
       files: [],
-      showAlert: true
+      showAlert: true,
     };
   }
 
@@ -34,8 +34,9 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   async getFiles() {
-    const getAllFilesURI = `http://localhost:8080/files?userId=${this.props.identityToken}`;
-    const result = await axios.get(getAllFilesURI);
+    const getAllFilesURI = "http://localhost:8080/files";
+    const body = { jwt: await getIdToken() };
+    const result = await axios.post(getAllFilesURI, body);
 
     if (result.status === 200) {
       const files: File[] = [];
@@ -86,10 +87,19 @@ export class RecordList extends React.Component<Props, State> {
 
     return (
       <Container fluid className="record-list">
-        {(this.props.role === "DOCTOR_UNVERIFIED")?
-          <Alert show={this.state.showAlert} dismissible onClick={() => {this.setState({showAlert: false})}}>
+        {this.props.role === "DOCTOR_UNVERIFIED" ? (
+          <Alert
+            show={this.state.showAlert}
+            dismissible
+            onClick={() => {
+              this.setState({ showAlert: false });
+            }}
+          >
             Da Ihre Verifizierung noch aussteht, können Sie noch keine Dokumente mit Patient:innen teilen.
-          </Alert> : ""}
+          </Alert>
+        ) : (
+          ""
+        )}
         <Row className="file-record file-record-headline">
           <Col className="file-thumbnail" xs={"1"}></Col>
           <Col className="file-name" xs={"8"}>
@@ -125,7 +135,7 @@ export class RecordList extends React.Component<Props, State> {
                   name={file.name}
                   owner={file.ownerId}
                 />
-                {(this.props.role === "PATIENT" || this.props.role === "DOCTOR")?
+                {this.props.role === "PATIENT" || this.props.role === "DOCTOR" ? (
                   <ShareModal
                     id={file.id}
                     name={file.name}
@@ -134,7 +144,9 @@ export class RecordList extends React.Component<Props, State> {
                     permissions={file.users}
                     role={this.props.role}
                   />
-                  : ""}
+                ) : (
+                  ""
+                )}
               </div>
             </Col>
             <Col className="file-size" xs={"1"}>
@@ -149,26 +161,25 @@ export class RecordList extends React.Component<Props, State> {
     );
   }
 
-  private downloadFile(fileId: string | null, fileName: string | null) {
+  private async downloadFile(fileId: string | null, fileName: string | null) {
     if (fileId === null) {
       return;
     }
-    axios({
-      url: `http://localhost:8080/files/${fileId}?userId=${this.props.identityToken}`,
-      method: "GET",
-      responseType: "blob",
-    }).then((response) => {
-      const url = URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      if (typeof fileName === "string") {
-        link.setAttribute("download", fileName);
-      }
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    });
+
+    const uri = `http://localhost:8080/files/get/${fileId}`;
+    const body = { jwt: await getIdToken() };
+    const response = await axios.post(uri, body, { responseType: "blob" });
+
+    const url = URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    if (typeof fileName === "string") {
+      link.setAttribute("download", fileName);
+    }
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 
   private handleOnSuccess(fileId: string) {
@@ -186,20 +197,17 @@ export class RecordList extends React.Component<Props, State> {
     );
   }
 
-  private updateMarked(e: React.MouseEvent<HTMLElement, MouseEvent>) {
+  private async updateMarked(e: React.MouseEvent<HTMLElement, MouseEvent>) {
     // Send UPDATE request to backend for the specified file
     const id = (e.currentTarget.parentNode?.parentNode?.parentNode as HTMLElement).getAttribute("id");
     if (id === null) {
       return;
     }
-    const userId = getUserAccountId();
     const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
-    const url = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}&userId=${userId}`;
-    axios({
-      url,
-      method: "GET",
-      responseType: "json",
-    });
+
+    const uri = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}`;
+    const body = { jwt: await getIdToken() };
+    await axios.post(uri, body, { responseType: "json" });
 
     const file = this.state.files.find((element) => element.id === id);
     const files_mod = this.state.files;

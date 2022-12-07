@@ -9,6 +9,7 @@ import { Registration } from "./page/Registration";
 import { Security } from "./page/Security";
 import { AuthenticationResult } from "@azure/msal-browser";
 import axios from "axios";
+import { getIdToken, getUserAccountId } from "./utils/AuthHelper";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
@@ -49,17 +50,26 @@ export default class App extends React.Component<Props, State> {
     );
   }
 
-  registrationCompleted() {
-    axios.get(`http://localhost:8080/users/registrationCompleted/${this.state.identityToken}`).then((response) => {
-      if (response.data.completed !== this.state.registrationCompleted) {
-        this.setState({ registrationCompleted: response.data.completed });
+  async registrationCompleted() {
+    const userId = getUserAccountId();
+    if (userId) {
+      const uri = "http://localhost:8080/users/registrationCompleted";
+      const body = { jwt: await getIdToken() };
+      const response = await axios.post(uri, body);
+
+      if (response.status === 200) {
+        if (response.data.completed !== this.state.registrationCompleted) {
+          this.setState({ registrationCompleted: response.data.completed });
+        }
       }
-    });
+    }
+  }
+
+  componentDidMount() {
+    this.registrationCompleted();
   }
 
   render() {
-    this.registrationCompleted();
-
     if (this.authenticated()) {
       if (this.state.registrationCompleted) {
         return (
@@ -74,7 +84,15 @@ export default class App extends React.Component<Props, State> {
                 <Route path="marked" element={<Record userId={this.state.identityToken} />} />
                 <Route path="shared" element={<Record userId={this.state.identityToken} />} />
               </Route>
-              <Route path="/for-me" element={<Registration identityToken={this.state.identityToken} registrationCompleted={this.state.registrationCompleted}/>} />
+              <Route
+                path="/for-me"
+                element={
+                  <Registration
+                    identityToken={this.state.identityToken}
+                    registrationCompleted={this.state.registrationCompleted}
+                  />
+                }
+              />
               <Route path="/security" element={<Security />} />
               <Route path={"/login"} element={<Login onLogin={this.handleLogin} />} />
             </Routes>

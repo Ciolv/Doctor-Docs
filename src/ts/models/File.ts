@@ -56,3 +56,10 @@ export class File {
     return sizeString;
   }
 }
+
+export enum FilePermission {
+  Read,
+  LocalDelete,
+  Write,
+  Delete,
+}

@@ -3,6 +3,7 @@ import { Alert, Button, Col, Container, Form, Row, Tab, Tabs } from "react-boots
 import "../../css/Registration.scss";
 import { User } from "../models/User";
 import axios from "axios";
+import { getIdToken } from "../utils/AuthHelper";
 
 type Props = {
   identityToken: string;
@@ -23,36 +24,42 @@ export class Registration extends React.Component<Props, User> {
       last_name: "",
       number: 0,
       postcode: 0,
-      street: ""
+      street: "",
     };
   }
 
   componentDidMount() {
-    axios.get(`http://localhost:8080/users/${this.props.identityToken}`).then((response) => {
+    getIdToken().then(async (jwt) => {
+      const uri = "http://localhost:8080/users";
+      const body = {
+        jwt: jwt,
+      };
+      const response = await axios.post(uri, body);
       if (response.status === 204) {
         return;
       }
       if (response.data !== null && response.data !== undefined) {
         this.setState(response.data);
       }
-      console.log(response.data);
     });
   }
 
   render() {
-    const isPatient: boolean | undefined = (this.props.registrationCompleted && (this.state.approbation === ""));
-    const isDoctor: boolean | undefined = (this.props.registrationCompleted && (this.state.approbation !== ""));
+    const isPatient: boolean | undefined = this.props.registrationCompleted && this.state.approbation === "";
+    const isDoctor: boolean | undefined = this.props.registrationCompleted && this.state.approbation !== "";
 
     return (
       <Tabs
-        defaultActiveKey={(isPatient? "patients" : "doctors")}
+        defaultActiveKey={isPatient ? "patients" : "doctors"}
         id="uncontrolled-tab-example"
         className="mb-3"
         justify
       >
         <Tab eventKey="patients" title="Für Patient:innen" className={"tab"} disabled={isDoctor}>
           <Container className="registration">
-            {this.props.registrationCompleted && <Alert className={"alert-danger"}>Ihre Registrierung ist erfolgreich abgeschlossen!</Alert>}
+            {this.props.registrationCompleted && (
+              <Alert className={"alert-danger"}>Ihre Registrierung ist erfolgreich abgeschlossen!</Alert>
+            )}
             <Row>
               <Col xs={3} />
               <Col xs={6} className="user-form">
@@ -140,7 +147,9 @@ export class Registration extends React.Component<Props, User> {
         </Tab>
         <Tab eventKey="doctors" className={"tab"} title="Für Behandler:innen" disabled={isPatient}>
           <Container className="registration">
-            {this.props.registrationCompleted && <Alert className={"alert-danger"}>Ihre Registrierung ist erfolgreich abgeschlossen!</Alert>}
+            {this.props.registrationCompleted && (
+              <Alert className={"alert-danger"}>Ihre Registrierung ist erfolgreich abgeschlossen!</Alert>
+            )}
             <Row>
               <Col xs={3} />
               <Col xs={6} className="user-form">
@@ -208,8 +217,11 @@ export class Registration extends React.Component<Props, User> {
                       onChange={(e) => this.handleApprobationChange(e.target.value)}
                     />
                   </Form.Group>
-                  <Alert>Beachten Sie bitte, dass wir Ihnen den Status als Behandler:in erst zuweisen können, nachdem wir Ihre Daten manuell mit dem zuständigen Arztregister bzw. der zuständigen Behörde abgeglichen haben.
-                  <b> Sie werden dann durch uns per E-Mail benachrichtigt.</b></Alert>
+                  <Alert>
+                    Beachten Sie bitte, dass wir Ihnen den Status als Behandler:in erst zuweisen können, nachdem wir
+                    Ihre Daten manuell mit dem zuständigen Arztregister bzw. der zuständigen Behörde abgeglichen haben.
+                    <b> Sie werden dann durch uns per E-Mail benachrichtigt.</b>
+                  </Alert>
                   <Button className="btn btn-primary" onClick={() => this.handleSubmit()}>
                     Speichern
                   </Button>
@@ -220,61 +232,60 @@ export class Registration extends React.Component<Props, User> {
           </Container>
         </Tab>
       </Tabs>
-
     );
   }
 
   handleInsuranceNumberChange(value: string) {
     this.setState({
-        insurance_number: value
+      insurance_number: value,
     });
   }
 
   handleApprobationChange(value: string) {
     this.setState({
-                    approbation: value
-                  });
+      approbation: value,
+    });
   }
 
   handleInsuranceChange(value: string) {
     this.setState({
-                    insurance: value
-                  });
+      insurance: value,
+    });
   }
 
   handleCityChange(value: string) {
     this.setState({
-        city: value
+      city: value,
     });
   }
 
   handlePostcodeChange(value: number) {
     this.setState({
-      postcode: value
+      postcode: value,
     });
   }
 
   handleStreetNumberChange(value: number) {
     this.setState({
-        number: value
+      number: value,
     });
   }
 
   handleStreetChange(value: string) {
     this.setState({
-        street: value
+      street: value,
     });
   }
 
   handleFirstNameChange(value: string) {
     this.setState({
-        first_name: value,
+      first_name: value,
     });
   }
 
   handleLastNameChange(value: string) {
     this.setState({
-        last_name: value
+      last_name: value,
     });
   }
 
@@ -289,7 +300,7 @@ export class Registration extends React.Component<Props, User> {
       city: this.state.city,
       insurance_number: this.state.insurance_number,
       insurance: this.state.insurance,
-      approbation: this.state.approbation
+      approbation: this.state.approbation,
     };
     try {
       axios.post("http://localhost:8080/users/registration", user).then(() => {
