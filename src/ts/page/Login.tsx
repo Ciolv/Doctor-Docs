@@ -2,7 +2,7 @@ import * as React from "react";
 import { AuthenticationResult, PublicClientApplication } from "@azure/msal-browser";
 import { Navigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
-import { getToken, msalConfig } from "../utils/AuthHelper";
+import { getTokenResponse, msalConfig } from "../utils/AuthHelper";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
@@ -28,7 +28,7 @@ export class Login extends React.Component<Props, State> {
   async testSilentLogin() {
     // skipcq: JS-0240
     try {
-      const tokenResponse = await getToken();
+      const tokenResponse = await getTokenResponse();
       if (tokenResponse) {
         this.props.onLogin(tokenResponse);
         return true;

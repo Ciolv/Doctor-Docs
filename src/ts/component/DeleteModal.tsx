@@ -5,7 +5,7 @@ import "../../css/ShareModal.scss";
 import { Alert, Form } from "react-bootstrap";
 import axios from "axios";
 import { BsTrash } from "react-icons/bs";
-import { getUserAccountId } from "../utils/AuthHelper";
+import { getIdToken } from "../utils/AuthHelper";
 
 type Props = {
   id: string;
@@ -25,25 +25,18 @@ export default function ShareModal(props: Props) {
     setInputValue(event.currentTarget?.value);
   }
 
-  function deleteDocument() {
-    const userId = getUserAccountId();
-    console.log(userId);
-    const uri = `http://localhost:8080/files/delete/${props.id}?userId=${userId}`;
-    console.log(uri);
-    axios
-      .get(uri)
-      .then((response) => {
-        if (response.status === 200) {
-          setShowAlert(false);
-          props.onSuccess(props.id);
-          handleClose();
-        } else {
-          setShowAlert(true);
-        }
-      })
-      .catch(() => {
-        setShowAlert(true);
-      });
+  async function deleteDocument() {
+    const uri = `http://localhost:8080/files/delete/${props.id}`;
+    const body = { jwt: await getIdToken() };
+    const response = await axios.post(uri, body, { responseType: "json" });
+
+    if (response.status === 200) {
+      setShowAlert(false);
+      props.onSuccess(props.id);
+      handleClose();
+    } else {
+      setShowAlert(true);
+    }
   }
 
   const secureWord = props.name.split(/[._ -]/)[0];

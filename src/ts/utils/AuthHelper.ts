@@ -28,7 +28,7 @@ export function getUserAccountId(): string {
   return "";
 }
 
-export async function getToken(): Promise<AuthenticationResult | null> {
+export async function getTokenResponse(): Promise<AuthenticationResult | null> {
   const account = getUserAccount();
   if (account) {
     // skipcq: JS-0240
@@ -36,4 +36,9 @@ export async function getToken(): Promise<AuthenticationResult | null> {
     return await msalInstance.acquireTokenSilent(request);
   }
   return null;
+}
+
+export async function getIdToken() {
+  const account = await getTokenResponse();
+  return account?.idToken;
 }
