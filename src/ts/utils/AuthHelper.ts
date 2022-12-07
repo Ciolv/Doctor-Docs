@@ -28,11 +28,6 @@ export function getUserAccountId(): string {
   return "";
 }
 
-export async function getIdToken() {
-  const account = await getTokenResponse();
-  return account?.idToken;
-}
-
 export async function getTokenResponse(): Promise<AuthenticationResult | null> {
   const account = getUserAccount();
   if (account) {
@@ -41,4 +36,9 @@ export async function getTokenResponse(): Promise<AuthenticationResult | null> {
     return await msalInstance.acquireTokenSilent(request);
   }
   return null;
+}
+
+export async function getIdToken() {
+  const account = await getTokenResponse();
+  return account?.idToken;
 }
