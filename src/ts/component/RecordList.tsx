@@ -125,7 +125,7 @@ export class RecordList extends React.Component<Props, State> {
                   name={file.name}
                   owner={file.ownerId}
                 />
-                {(this.props.role === "PATIENT" || this.props.role === "DOCTOR")?
+                {(this.props.role === "PATIENT" || (this.props.role === "DOCTOR" && (file.ownerId === this.props.identityToken)))?
                   <ShareModal
                     id={file.id}
                     name={file.name}
