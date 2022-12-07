@@ -29,6 +29,27 @@ export class RecordList extends React.Component<Props, State> {
     };
   }
 
+  private static async downloadFile(fileId: string | null, fileName: string | null) {
+    if (fileId === null) {
+      return;
+    }
+
+    const uri = `http://localhost:8080/files/get/${fileId}`;
+    const body = { jwt: await getIdToken() };
+    const response = await axios.post(uri, body, { responseType: "blob" });
+
+    const url = URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    if (typeof fileName === "string") {
+      link.setAttribute("download", fileName);
+    }
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
   componentDidMount() {
     this.getFiles();
   }
@@ -161,27 +182,6 @@ export class RecordList extends React.Component<Props, State> {
     );
   }
 
-  private async downloadFile(fileId: string | null, fileName: string | null) {
-    if (fileId === null) {
-      return;
-    }
-
-    const uri = `http://localhost:8080/files/get/${fileId}`;
-    const body = { jwt: await getIdToken() };
-    const response = await axios.post(uri, body, { responseType: "blob" });
-
-    const url = URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement("a");
-    link.href = url;
-    if (typeof fileName === "string") {
-      link.setAttribute("download", fileName);
-    }
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
-
   private handleOnSuccess(fileId: string) {
     this.setState((prevState) => ({ files: prevState.files.filter((f) => f.id !== fileId) }));
   }
@@ -191,7 +191,7 @@ export class RecordList extends React.Component<Props, State> {
     if (documentNode === null) {
       return;
     }
-    this.downloadFile(
+    RecordList.downloadFile(
       documentNode.getAttribute("id"),
       (documentNode.getElementsByClassName("file-name")[0] as HTMLElement).innerText
     ).then((_) => _);
