@@ -35,12 +35,14 @@ export default function ShareModal(props: Props) {
   function getPermissions() {
     const permittedDocs: User[] = [];
     getIdToken().then((jwt) => {
-      const body = { jwt: jwt };
+      const body = { jwt };
       props.permissions.forEach((doc: UserPermission) => {
         const url = `http://localhost:8080/doctors/data/${doc.userId}`;
         const canRead = doc.permission >= FilePermission.Read;
         const hasId = doc.userId !== null && doc.userId !== undefined;
-        const alreadyIncluded = permissions.some((d) => permittedDocs.some((doc) => d.id === doc.id));
+        const alreadyIncluded = permissions
+          ? permissions.some((d) => permittedDocs.some((doctor) => d.id === doctor.id))
+          : false;
         const isOwnAccount = getUserAccountId() === doc.userId;
 
         if (canRead && hasId && !alreadyIncluded && !isOwnAccount) {
@@ -80,14 +82,15 @@ export default function ShareModal(props: Props) {
   async function handlePermit() {
     setShow(false);
     if (docsActions.length > 0) {
+      const jwt = await getIdToken();
       for (const permission of docsActions) {
         const uri = `http://localhost:8080/files/permit/${props.id}`;
         const body = {
-          jwt: await getIdToken(),
+          jwt,
           userId: permission.docId,
           action: permission.action,
         };
-        await axios.post(uri, body, { responseType: "json" });
+        axios.post(uri, body, { responseType: "json" }).then((_) => _);
       }
     }
   }

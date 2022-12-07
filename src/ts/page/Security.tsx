@@ -6,6 +6,7 @@ type Props = {};
 type State = {};
 
 export class Security extends React.Component<Props, State> {
+  // skipcq:  JS-0105
   render() {
     return (
       <Container className="security">

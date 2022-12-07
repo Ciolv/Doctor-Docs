@@ -194,7 +194,7 @@ export class RecordList extends React.Component<Props, State> {
     this.downloadFile(
       documentNode.getAttribute("id"),
       (documentNode.getElementsByClassName("file-name")[0] as HTMLElement).innerText
-    );
+    ).then((_) => _);
   }
 
   private async updateMarked(e: React.MouseEvent<HTMLElement, MouseEvent>) {

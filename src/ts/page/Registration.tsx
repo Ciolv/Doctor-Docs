@@ -32,7 +32,7 @@ export class Registration extends React.Component<Props, User> {
     getIdToken().then(async (jwt) => {
       const uri = "http://localhost:8080/users";
       const body = {
-        jwt: jwt,
+        jwt,
       };
       const response = await axios.post(uri, body);
       if (response.status === 204) {
