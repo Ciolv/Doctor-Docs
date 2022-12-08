@@ -8,6 +8,7 @@ import { LabeledIcon } from "./LabeledIcon";
 import { FaBox } from "react-icons/fa";
 import { BsFillShieldLockFill } from "react-icons/bs";
 import { IoMdPerson } from "react-icons/io";
+import { IoMdHelpCircle } from "react-icons/io";
 import { AccountInfo, PublicClientApplication } from "@azure/msal-browser";
 
 type Props = {
@@ -59,7 +60,12 @@ export class Navigation extends React.Component<Props, State> {
             </Nav.Item>
             <Nav.Item>
               <Nav.Link as={NavLink} to="/security">
-                <LabeledIcon text="Sicherheit" icon={BsFillShieldLockFill}/>
+                <LabeledIcon text="Sicherheit" icon={BsFillShieldLockFill} />
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={NavLink} to="/help">
+                <LabeledIcon text="Hilfe" icon={IoMdHelpCircle} />
               </Nav.Link>
             </Nav.Item>
           </Nav>
