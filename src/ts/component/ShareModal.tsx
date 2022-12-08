@@ -66,7 +66,7 @@ export default function ShareModal(props: Props) {
               postcode: docMeta.data.postcode,
               city: docMeta.data.city,
               insurance_number: docMeta.data.insurance_number,
-              insurance: docMeta.data.insurance
+              insurance: docMeta.data.insurance,
             };
 
             permittedDocs.push(currentDoc);
@@ -101,7 +101,7 @@ export default function ShareModal(props: Props) {
           jwt,
           userId: permission.docId,
           action: permission.action,
-          role: permission.role
+          role: permission.role,
         };
         axios.post(uri, body, { responseType: "json" }).then((_) => _);
       }
@@ -110,10 +110,8 @@ export default function ShareModal(props: Props) {
 
   function addPermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
     const n_docsActions = docsActions;
-    const id = (event.currentTarget as HTMLElement
-    ).id;
-    const role = (id.length === 10 ? "PATIENT" : "DOCTOR"
-    );
+    const id = (event.currentTarget as HTMLElement).id;
+    const role = id.length === 10 ? "PATIENT" : "DOCTOR";
     if (id.length === 10) {
       n_docsActions.push({ docId: id, action: "ADD", role });
     } else {
@@ -126,13 +124,19 @@ export default function ShareModal(props: Props) {
         return String(element.id) === id;
       });
     } else {
-      selectedDoc =
-        { id, insurance_number: id, first_name: "", last_name: "", street: "", number: 0, city: "", postcode: 0 };
+      selectedDoc = {
+        id,
+        insurance_number: id,
+        first_name: "",
+        last_name: "",
+        street: "",
+        number: 0,
+        city: "",
+        postcode: 0,
+      };
     }
 
-    console.log(selectedDoc);
     const n_permissions = permissions;
-
 
     const isAlreadyPermitted = permissions.find((element) => {
       return String(element.id) === id;
@@ -146,8 +150,7 @@ export default function ShareModal(props: Props) {
 
   function removePermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
     const n_docsActions = docsActions;
-    const id = (event.currentTarget as HTMLElement
-    ).id;
+    const id = (event.currentTarget as HTMLElement).id;
 
     const selectedDoc = permissions.find((element) => {
       return String(element.id) === id;
@@ -170,7 +173,7 @@ export default function ShareModal(props: Props) {
   function docSearch(event: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(event.target.value);
     if (event.target.value !== "" && event.target.value !== undefined) {
-      getIdToken().then(jwt => {
+      getIdToken().then((jwt) => {
         const uri = `http://localhost:8080/doctors/${event.target.value}`;
         const body = {
           jwt,
@@ -179,8 +182,7 @@ export default function ShareModal(props: Props) {
           const doctors = response.data;
           setDocs(doctors);
         });
-      })
-
+      });
     }
   }
 
@@ -189,17 +191,16 @@ export default function ShareModal(props: Props) {
     setInsValidity("NULL");
     if (event.target.value.length === 10) {
       const numToCheck = event.target.value;
-      const regex = /^([A-Z])([0-9]{8})([0-9])$/
-      const match = regex.exec(numToCheck)
+      const regex = /^([A-Z])([0-9]{8})([0-9])$/;
+      const match = regex.exec(numToCheck);
       if (match) {
-        const cardNo = (`0${match[1].charCodeAt(0) - 64}`
-                       ).slice(-2) + match[2];
+        const cardNo = `0${match[1].charCodeAt(0) - 64}`.slice(-2) + match[2];
         let sum = 0;
         for (let i = 0; i < 10; i++) {
           // eslint-disable-next-line security/detect-object-injection
           let digit = Number(cardNo[i]);
           if (i % 2 === 1) {
-            digit *= 2
+            digit *= 2;
           }
           if (digit > 9) {
             digit -= 9;
@@ -209,7 +210,7 @@ export default function ShareModal(props: Props) {
         if (sum % 10 === Number(match[3])) {
           const jwt = await getIdToken();
           const body = {
-            jwt
+            jwt,
           };
           axios.post(`http://localhost:8080/users/search/${numToCheck}`, body).then((response) => {
             if (response.data === true) {
@@ -224,18 +225,19 @@ export default function ShareModal(props: Props) {
       } else {
         setInsValidity("INVALID");
       }
-    } else
+    } else {
       if (event.target.value.length > 10) {
         setInsValidity("INVALID");
       } else {
         setInsValidity("PENDING");
       }
+    }
   }
 
   return (
     <>
       <Button style={{ background: "none", border: "none" }} onClick={handleShow}>
-        <BsShare className={"trashcan"}/>
+        <BsShare className={"trashcan"} />
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -243,89 +245,113 @@ export default function ShareModal(props: Props) {
           <Modal.Title>Freigeben</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {permissions.length === 0 ? <span><b>{props.name}</b> ist noch für keine Personen freigegeben.</span> : <span><b>{props.name}</b> ist für folgende Personen freigegeben:</span>}
+          {permissions.length === 0 ? (
+            <span>
+              <b>{props.name}</b> ist noch für keine Personen freigegeben.
+            </span>
+          ) : (
+            <span>
+              <b>{props.name}</b> ist für folgende Personen freigegeben:
+            </span>
+          )}
           <div>
             {permissions.map((record) => (
               <div key={record.id} className={"permittedDoc"}>
-                {(record.id.length === 10 || (record.insurance_number !== "" && record.approbation === ""
-                )
-                ) ?
+                {record.id.length === 10 || (record.insurance_number !== "" && record.approbation === "") ? (
                   <div>
                     <div style={{ display: "inline-block" }}>
-                      <b>
-                        {record.insurance_number}
-                      </b>
-                      <br/>
+                      <b>{record.insurance_number}</b>
+                      <br />
                       <span>
-                        <br/>
-                    </span>
+                        <br />
+                      </span>
                     </div>
                     <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
                       <BsTrash className={"trashcan no-margin"}></BsTrash>
                     </Button>
                   </div>
-                  :
+                ) : (
                   <div>
                     <div style={{ display: "inline-block" }}>
                       <b>
                         {record.first_name} {record.last_name}
                       </b>
-                      <br/>
+                      <br />
                       <span>
-                      {record.street} {record.number}, {record.postcode} {record.city}
-                    </span>
+                        {record.street} {record.number}, {record.postcode} {record.city}
+                      </span>
                     </div>
                     <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
                       <BsTrash className={"trashcan no-margin"}></BsTrash>
                     </Button>
-                  </div>}
+                  </div>
+                )}
               </div>
             ))}
           </div>
-          <br/>
+          <br />
           Weitere Freigaben hinzufügen:
-          {props.role === "PATIENT" ?
+          {props.role === "PATIENT" ? (
             <Form>
               <Form.Group className="mb-3" controlId="formBasicGivenName">
                 <Form.Label></Form.Label>
-                <Form.Control type="Text" placeholder="Behandler:in suchen ..." value={inputValue}
-                              onChange={docSearch}/>
+                <Form.Control
+                  type="Text"
+                  placeholder="Behandler:in suchen ..."
+                  value={inputValue}
+                  onChange={docSearch}
+                />
               </Form.Group>
             </Form>
-            :
+          ) : (
             <Form>
               <Form.Group className="mb-3" controlId="formBasicGivenName">
                 <Form.Label></Form.Label>
-                <Form.Control type="Text" placeholder="Versicherungsnummer eingeben ..." value={inputValue}
-                              onChange={insNumValidate} style={{ width: "79%", float: "left" }}/>
+                <Form.Control
+                  type="Text"
+                  placeholder="Versicherungsnummer eingeben ..."
+                  value={inputValue}
+                  onChange={insNumValidate}
+                  style={{ width: "79%", float: "left" }}
+                />
                 <div style={{ display: "inline" }}>
-                  {insValidity === "PENDING" ? <BsExclamationCircleFill
-                    className={"check pending"}></BsExclamationCircleFill> : ""}
-                  {(insValidity === "VALID_USER" || insValidity === "VALID_NO_USER"
-                  ) ? <BsCheckCircleFill className={"check valid"}></BsCheckCircleFill> : ""}
+                  {insValidity === "PENDING" ? (
+                    <BsExclamationCircleFill className={"check pending"}></BsExclamationCircleFill>
+                  ) : (
+                    ""
+                  )}
+                  {insValidity === "VALID_USER" || insValidity === "VALID_NO_USER" ? (
+                    <BsCheckCircleFill className={"check valid"}></BsCheckCircleFill>
+                  ) : (
+                    ""
+                  )}
                   {insValidity === "INVALID" ? <BsFillXCircleFill className={"check invalid"}></BsFillXCircleFill> : ""}
                 </div>
-                <Button className={"btn-add"} disabled={insValidity !== "VALID_USER"} id={inputValue}
-                        onClick={addPermission}>
+                <Button
+                  className={"btn-add"}
+                  disabled={insValidity !== "VALID_USER"}
+                  id={inputValue}
+                  onClick={addPermission}
+                >
                   <BsPlusLg className={"trashcan no-margin"}></BsPlusLg>
                 </Button>
-                {insValidity === "VALID_NO_USER" ?
+                {insValidity === "VALID_NO_USER" ? (
                   <Alert variant={"danger"} className={"alert"}>
                     Die Person mit dieser Versicherungsnummer hat einer Freigabe von Dokumenten nicht zugestimmt.
                   </Alert>
-                  : ""}
+                ) : (
+                  ""
+                )}
               </Form.Group>
             </Form>
-
-          }
-
+          )}
           {docs.map((record) => (
             <div key={record.id} className={"permittedDoc"}>
               <div style={{ display: "inline-block" }}>
                 <b>
                   {record.first_name} {record.last_name}
                 </b>
-                <br/>
+                <br />
                 <span>
                   {record.street} {record.number}, {record.postcode} {record.city}
                 </span>

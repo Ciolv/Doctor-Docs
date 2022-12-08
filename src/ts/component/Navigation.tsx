@@ -18,12 +18,11 @@ type State = {};
 const msalConfig = {
   auth: {
     clientId: "49e6fa71-9a2c-465e-a3bc-8ba2f15bad61",
-    redirectUri: "http://localhost:3000/home"
-  }
+    redirectUri: "http://localhost:3000/home",
+  },
 };
 
 const msalInstance = new PublicClientApplication(msalConfig);
-
 
 export class Navigation extends React.Component<Props, State> {
   async signOutClickHandler() {
@@ -34,7 +33,7 @@ export class Navigation extends React.Component<Props, State> {
     const logoutRequest = {
       account: msalInstance.getAccountByHomeId(homeAccountId),
       postLogoutRedirectUri: "http://localhost:3000/login",
-      mainWindowRedirectUri: "http://localhost:3000/login"
+      mainWindowRedirectUri: "http://localhost:3000/login",
     };
     await msalInstance.logoutPopup(logoutRequest);
   }
@@ -44,39 +43,43 @@ export class Navigation extends React.Component<Props, State> {
       <>
         <Navbar>
           <Navbar.Brand as={NavLink} to="/">
-            <img src={Heartbeat} alt="Heartbeat" className="logo"/>
+            <img src={Heartbeat} alt="Heartbeat" className="logo" />
           </Navbar.Brand>
           <Nav>
             <Nav.Item>
               <Nav.Link as={NavLink} to="/record">
-                <LabeledIcon text="Akte" icon={FaBox}/>
+                <LabeledIcon text="Akte" icon={FaBox} />
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link as={NavLink} to="/for-me">
-                <LabeledIcon text="Für mich" icon={IoMdPerson}/>
+                <LabeledIcon text="Für mich" icon={IoMdPerson} />
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link as={NavLink} to="/security">
-                <LabeledIcon text="Sicherheit" icon={BsFillShieldLockFill}/>
+                <LabeledIcon text="Sicherheit" icon={BsFillShieldLockFill} />
               </Nav.Link>
             </Nav.Item>
           </Nav>
           <Navbar.Collapse className="justify-content-end">
-            <Button variant="primary" onClick={() => this.signOutClickHandler()}>Logout</Button>
+            <Button variant="primary" onClick={() => this.signOutClickHandler()}>
+              Logout
+            </Button>
           </Navbar.Collapse>
 
           <div className={"security-button-div"}>
             <Button className={"security-button"}>
-              <a className={"mailto-link"}
-                 href={"mailto:reanimated_nanosensors@simplelogin.com?subject=Sicherheitsvorfall%20bei%20Doctor%20Docs"}>
-                 Vorfall melden
+              <a
+                className={"mailto-link"}
+                href={"mailto:reanimated_nanosensors@simplelogin.com?subject=Sicherheitsvorfall%20bei%20Doctor%20Docs"}
+              >
+                Vorfall melden
               </a>
             </Button>
           </div>
         </Navbar>
-        <Outlet/>
+        <Outlet />
       </>
     );
   }
