@@ -7,8 +7,7 @@ import "../../css/Navigation.scss";
 import { LabeledIcon } from "./LabeledIcon";
 import { FaBox } from "react-icons/fa";
 import { BsFillShieldLockFill } from "react-icons/bs";
-import { IoMdPerson } from "react-icons/io";
-import { IoMdHelpCircle } from "react-icons/io";
+import { IoMdHelpCircle, IoMdPerson } from "react-icons/io";
 import { AccountInfo, PublicClientApplication } from "@azure/msal-browser";
 
 type Props = {
