@@ -178,7 +178,7 @@ export default function ShareModal(props: Props) {
     }
   }
 
-  function insNumValidate(event: React.ChangeEvent<HTMLInputElement>) {
+  async function insNumValidate(event: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(event.target.value);
     setInsValidity("NULL");
     if (event.target.value.length === 10) {
@@ -200,14 +200,18 @@ export default function ShareModal(props: Props) {
           sum += digit;
         }
         if (sum % 10 === Number(match[3])) {
-          axios.get(`http://localhost:8080/users/search/${numToCheck}`).then((response) => {
+          const jwt = await getIdToken();
+          const body = {
+            jwt
+          };
+          axios.post(`http://localhost:8080/users/search/${numToCheck}`, body).then((response) => {
             if (response.data === true) {
               setInsValidity("VALID_USER");
             }
             else {
               setInsValidity("VALID_NO_USER");
             }
-          })
+          });
         }
         else {
           setInsValidity("INVALID");
