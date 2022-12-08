@@ -3,7 +3,6 @@ import * as React from "react";
 import { AlignType } from "react-bootstrap/types";
 import "../../css/LabeledIcon.css";
 
-
 type Props = {
   alignText?: AlignType;
   text: string;
@@ -14,12 +13,11 @@ type State = {
   alignment: string;
 };
 
-//{this.props.alignText == "start" && <span className="text">{this.props.text}<span/>}
 export class LabeledIcon extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      alignment: props.alignText === "start" ? "start" : "end"
+      alignment: props.alignText === "start" ? "start" : "end",
     };
   }
 

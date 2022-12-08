@@ -46,12 +46,7 @@ export class Registration extends React.Component<Props, User> {
     const isDoctor: boolean | undefined = this.props.registrationCompleted && this.state.approbation !== "";
 
     return (
-      <Tabs
-        defaultActiveKey={isDoctor ? "doctors" : "patients"}
-        id="uncontrolled-tab-example"
-        className="mb-3"
-        justify
-      >
+      <Tabs defaultActiveKey={isDoctor ? "doctors" : "patients"} id="uncontrolled-tab-example" className="mb-3" justify>
         <Tab eventKey="patients" title="Für Patient:innen" className={"tab"} disabled={isDoctor}>
           <Container className="registration">
             {this.props.registrationCompleted && (
