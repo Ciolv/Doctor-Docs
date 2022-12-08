@@ -47,7 +47,7 @@ export class Registration extends React.Component<Props, User> {
 
     return (
       <Tabs
-        defaultActiveKey={isPatient ? "patients" : "doctors"}
+        defaultActiveKey={isDoctor ? "doctors" : "patients"}
         id="uncontrolled-tab-example"
         className="mb-3"
         justify

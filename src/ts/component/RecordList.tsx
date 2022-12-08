@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Alert, Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import "../../css/RecordList.scss";
 import ShareModal from "./ShareModal";
 import DeleteModal from "./DeleteModal";
@@ -108,21 +108,9 @@ export class RecordList extends React.Component<Props, State> {
       }
     });
 
-    return (
+    return (<div>
       <Container fluid className="record-list">
-        {this.props.role === "DOCTOR_UNVERIFIED" ? (
-          <Alert
-            show={this.state.showAlert}
-            dismissible
-            onClick={() => {
-              this.setState({ showAlert: false });
-            }}
-          >
-            Da Ihre Verifizierung noch aussteht, können Sie noch keine Dokumente mit Patient:innen teilen.
-          </Alert>
-        ) : (
-          ""
-        )}
+
         <Row className="file-record file-record-headline">
           <Col className="file-thumbnail" xs={"1"}></Col>
           <Col className="file-name" xs={"8"}>
@@ -182,7 +170,7 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
           </Row>
         ))}
-      </Container>
+      </Container></div>
     );
   }
 
