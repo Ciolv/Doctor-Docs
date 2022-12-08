@@ -95,6 +95,7 @@ export class RecordList extends React.Component<Props, State> {
 
   render() {
     const files: File[] = [];
+    console.log(this.props.view);
     this.state.files.forEach((file) => {
       if (
         this.props.view === "record" ||
@@ -102,6 +103,7 @@ export class RecordList extends React.Component<Props, State> {
         (this.props.view === "marked" && file.marked) ||
         (this.props.view === "newest" && file.lastUpdateTime.getDate() > new Date().getDate() - 8)
       ) {
+        console.log("push");
         files.push(file);
       }
     });
@@ -157,8 +159,9 @@ export class RecordList extends React.Component<Props, State> {
                   owner={file.ownerId}
                 />
 
-                {(this.props.role === "PATIENT" || (this.props.role === "DOCTOR" && (file.ownerId === this.props.identityToken)))?
-                  (<ShareModal
+                {this.props.role === "PATIENT" ||
+                (this.props.role === "DOCTOR" && file.ownerId === this.props.identityToken) ? (
+                  <ShareModal
                     id={file.id}
                     name={file.name}
                     owner={file.ownerId}

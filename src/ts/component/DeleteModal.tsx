@@ -30,7 +30,7 @@ export default function ShareModal(props: Props) {
     const body = { jwt: await getIdToken() };
     const response = await axios.post(uri, body, { responseType: "json" });
 
-    if (response.status === 200) {
+    if (response.status === 204) {
       setShowAlert(false);
       props.onSuccess(props.id);
       handleClose();
