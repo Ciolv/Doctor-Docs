@@ -11,6 +11,16 @@ type Props = {
   registrationCompleted?: boolean;
 };
 
+let city_valid = true;
+let first_name_valid = true;
+let insurance_valid = true;
+let insurance_number_valid = true;
+let approbation_valid = true;
+let last_name_valid = true;
+let postcode_valid = true;
+let street_valid = true;
+let street_number_valid = true;
+
 export class Registration extends React.Component<Props, User> {
   constructor(props: Props) {
     super(props);
@@ -27,6 +37,8 @@ export class Registration extends React.Component<Props, User> {
       street: "",
     };
   }
+
+
 
   componentDidMount() {
     getIdToken().then(async (jwt) => {
@@ -72,6 +84,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.first_name}
                       onChange={(e) => this.handleFirstNameChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: first_name_valid ? "none" : ""}}>Vorname ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicSurname">
                     <Form.Label>Nachname</Form.Label>
@@ -81,6 +94,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.last_name}
                       onChange={(e) => this.handleLastNameChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: last_name_valid ? "none" : ""}}>Nachname ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicStreet">
                     <Form.Label>Straße</Form.Label>
@@ -90,6 +104,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.street}
                       onChange={(e) => this.handleStreetChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: street_valid ? "none" : ""}}>Straße ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicStreetNumber">
                     <Form.Label>Hausnummer</Form.Label>
@@ -99,6 +114,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.number}
                       onChange={(e) => this.handleStreetNumberChange(e.target.value as unknown as number)}
                     />
+                    <div className={"invalid-msg"} style={{display: street_number_valid ? "none" : ""}}>Hausnummer ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicPostalCode">
                     <Form.Label>Postleitzahl</Form.Label>
@@ -108,6 +124,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.postcode}
                       onChange={(e) => this.handlePostcodeChange(e.target.value as unknown as number)}
                     />
+                    <div className={"invalid-msg"} style={{display: postcode_valid ? "none" : ""}}>Postleitzahl ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicCity">
                     <Form.Label>Stadt</Form.Label>
@@ -117,6 +134,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.city}
                       onChange={(e) => this.handleCityChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: city_valid ? "none" : ""}}>Stadt ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicInsurance">
                     <Form.Label>Versicherung</Form.Label>
@@ -126,6 +144,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.insurance}
                       onChange={(e) => this.handleInsuranceChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: insurance_valid ? "none" : ""}}>Versicherung ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicInsurancePolicyNumber">
                     <Form.Label>Versicherungsnummer</Form.Label>
@@ -135,6 +154,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.insurance_number}
                       onChange={(e) => this.handleInsuranceNumberChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: insurance_number_valid ? "none" : ""}}>Versicherungsnummer ungültig</div>
                   </Form.Group>
                   <Button className="btn btn-primary" onClick={() => this.handleSubmit()}>
                     Speichern
@@ -162,6 +182,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.first_name}
                       onChange={(e) => this.handleFirstNameChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: first_name_valid ? "none" : ""}}>Vorname ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicSurname">
                     <Form.Label>Nachname</Form.Label>
@@ -171,6 +192,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.last_name}
                       onChange={(e) => this.handleLastNameChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: last_name_valid ? "none" : ""}}>Nachname ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicStreet">
                     <Form.Label>Straße</Form.Label>
@@ -180,6 +202,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.street}
                       onChange={(e) => this.handleStreetChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: street_valid ? "none" : ""}}>Straße ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicStreetNumber">
                     <Form.Label>Hausnummer</Form.Label>
@@ -189,6 +212,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.number}
                       onChange={(e) => this.handleStreetNumberChange(e.target.value as unknown as number)}
                     />
+                    <div className={"invalid-msg"} style={{display: street_number_valid ? "none" : ""}}>Hausnummer ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicPostalCode">
                     <Form.Label>Postleitzahl</Form.Label>
@@ -198,6 +222,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.postcode}
                       onChange={(e) => this.handlePostcodeChange(e.target.value as unknown as number)}
                     />
+                    <div className={"invalid-msg"} style={{display: postcode_valid ? "none" : ""}}>Postleitzahl ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicCity">
                     <Form.Label>Stadt</Form.Label>
@@ -207,6 +232,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.city}
                       onChange={(e) => this.handleCityChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: city_valid ? "none" : ""}}>Stadt ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicApprobation">
                     <Form.Label>Ausstellende Behörde der Approbation / Zulassung</Form.Label>
@@ -216,6 +242,7 @@ export class Registration extends React.Component<Props, User> {
                       value={this.state.approbation}
                       onChange={(e) => this.handleApprobationChange(e.target.value)}
                     />
+                    <div className={"invalid-msg"} style={{display: approbation_valid ? "none" : ""}}>Approbation ungültig</div>
                   </Form.Group>
                   <Alert>
                     Beachten Sie bitte, dass wir Ihnen den Status als Behandler:in erst zuweisen können, nachdem wir
@@ -236,59 +263,120 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleInsuranceNumberChange(value: string) {
-    this.setState({
-      insurance_number: value,
-    });
-  }
+    const regexp = new RegExp("^[A-Z]{1}[0-9]{9}$");
+    if (regexp.test(value)) {
+      insurance_number_valid = true;
+    } else {
+      insurance_number_valid = false;
+    }
+    this.setState({ insurance_number: value })
 
-  handleApprobationChange(value: string) {
-    this.setState({
-      approbation: value,
-    });
-  }
+    };
 
   handleInsuranceChange(value: string) {
+    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$");
+    if (regexp.test(value)) {
+      insurance_valid = true;
+    }
+    else {
+      insurance_valid = false;
+    }
     this.setState({
-      insurance: value,
-    });
+                    insurance: value
+                  });
+
   }
 
   handleCityChange(value: string) {
+    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$");
+    if (regexp.test(value)) {
+      city_valid = true;
+    }
+    else {
+      city_valid = false;
+    }
     this.setState({
-      city: value,
-    });
+                    city: value
+                  });
   }
 
   handlePostcodeChange(value: number) {
+    const regexp = new RegExp("^[0-9]{5}$");
+    if (regexp.test(String(value))) {
+      postcode_valid = true;
+    }
+    else {
+      postcode_valid = false;
+    }
     this.setState({
-      postcode: value,
-    });
+                    postcode: value
+                  });
   }
 
   handleStreetNumberChange(value: number) {
+    const regexp = new RegExp("^[0-9]{1,4}$");
+    if (regexp.test(String(value))) {
+      street_number_valid = true;
+    }
+    else {
+      street_number_valid = false;
+    }
     this.setState({
-      number: value,
-    });
+                    number: value
+                  });
   }
 
   handleStreetChange(value: string) {
+    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$");
+    if (regexp.test(value)) {
+      street_valid = true;
+    }
+    else {
+      street_valid = false;
+    }
     this.setState({
-      street: value,
-    });
+                    street: value
+                  });
   }
 
   handleFirstNameChange(value: string) {
+    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù \\-\\s\\.]+$");
+    if (regexp.test(value)) {
+      first_name_valid = true;
+    }
+    else {
+      first_name_valid = false;
+    }
     this.setState({
-      first_name: value,
-    });
+                    first_name: value,
+                  });
   }
 
   handleLastNameChange(value: string) {
+    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s\\.]+$");
+    if (regexp.test(value)) {
+      last_name_valid = true;
+    }
+    else {
+      last_name_valid = false;
+    }
     this.setState({
-      last_name: value,
-    });
-  }
+                    last_name: value
+                  });
+  };
 
+  handleApprobationChange(value: string) {
+    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù \\-\\s]+$");
+    if (regexp.test(value)) {
+      approbation_valid = true;
+    }
+    else {
+      approbation_valid = false;
+    }
+    this.setState({
+                    approbation: value
+                  });
+  }
   handleSubmit() {
     const user: User = {
       id: this.state.id,
