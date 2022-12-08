@@ -9,3 +9,17 @@ nav.navbar {
   padding: 0 0.5rem;
   border-bottom: 1px solid $light-gray;
 }
+
+.security-button {
+  margin-left: 2rem;
+  background-color: red;
+}
+
+.mailto-link:link {
+  text-decoration: none;
+  color: black;
+}
+.mailto-link:visited {
+  text-decoration: none;
+  color: black;
+}
