@@ -18,3 +18,9 @@ div .row > * {
   font-size: 3rem;
   color: $primary;
 }
+
+.alert {
+  display: block !important;
+  margin-top: 2%;
+  width: 100%;
+}

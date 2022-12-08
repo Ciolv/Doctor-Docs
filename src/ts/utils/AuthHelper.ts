@@ -3,6 +3,7 @@ import { AccountInfo, AuthenticationResult, PublicClientApplication } from "@azu
 export const msalConfig = {
   auth: {
     clientId: "49e6fa71-9a2c-465e-a3bc-8ba2f15bad61",
+    authority: "https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad",
     redirectUri: "http://localhost:3000/home",
   },
 };
