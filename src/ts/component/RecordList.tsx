@@ -16,7 +16,6 @@ type Props = {
 };
 type State = {
   files: File[];
-  showAlert?: boolean;
 };
 
 export class RecordList extends React.Component<Props, State> {
@@ -25,7 +24,6 @@ export class RecordList extends React.Component<Props, State> {
 
     this.state = {
       files: [],
-      showAlert: true,
     };
   }
 
