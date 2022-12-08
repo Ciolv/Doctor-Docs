@@ -2,8 +2,15 @@ import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../css/ShareModal.scss";
-import { BsPlusLg, BsShare, BsTrash } from "react-icons/bs";
-import { Form } from "react-bootstrap";
+import {
+  BsCheckCircleFill,
+  BsExclamationCircleFill,
+  BsFillXCircleFill,
+  BsPlusLg,
+  BsShare,
+  BsTrash
+} from "react-icons/bs";
+import { Alert, Form } from "react-bootstrap";
 import axios from "axios";
 import { getIdToken, getUserAccountId } from "../utils/AuthHelper";
 import { User } from "../models/User";
@@ -26,7 +33,10 @@ type UserPermission = {
 type DocActions = {
   docId: string;
   action: "ADD" | "DELETE";
+  role: "DOCTOR" | "PATIENT";
 };
+
+type InsNumState = "NULL" | "PENDING" | "INVALID" | "VALID_USER" | "VALID_NO_USER";
 
 const mockData: User[] = [];
 const checkMock: DocActions[] = [];
@@ -36,7 +46,7 @@ export default function ShareModal(props: Props) {
     const permittedDocs: User[] = [];
     getIdToken().then((jwt) => {
       const body = { jwt };
-      props.permissions.forEach((doc: UserPermission) => {
+      props.permissions.forEach((doc) => {
         const url = `http://localhost:8080/doctors/data/${doc.userId}`;
         const canRead = doc.permission >= FilePermission.Read;
         const hasId = doc.userId !== null && doc.userId !== undefined;
@@ -55,22 +65,24 @@ export default function ShareModal(props: Props) {
               street: docMeta.data.street,
               postcode: docMeta.data.postcode,
               city: docMeta.data.city,
+              insurance_number: docMeta.data.insurance_number,
+              insurance: docMeta.data.insurance
             };
 
             permittedDocs.push(currentDoc);
           });
         }
-      });
     });
-
+    });
     return permittedDocs;
   }
 
   const [show, setShow] = useState(false);
-  const [permissions, setPermissions] = useState<User[]>(getPermissions());
-  const [inputValue, setInputValue] = useState("");
-  const [docsActions, setDocsActions] = useState(checkMock);
-  const [docs, setDocs] = useState(mockData);
+  const [insValidity, setInsValidity] = useState<InsNumState>("NULL");
+  const [permissions, setPermissions] = useState<User[]>(() => getPermissions());
+  const [inputValue, setInputValue] = useState<string>("");
+  const [docsActions, setDocsActions] = useState<DocActions[]>(checkMock);
+  const [docs, setDocs] = useState<User[]>(mockData);
 
   const handleShow = () => {
     setShow(true);
@@ -89,6 +101,7 @@ export default function ShareModal(props: Props) {
           jwt,
           userId: permission.docId,
           action: permission.action,
+          role: permission.role
         };
         axios.post(uri, body, { responseType: "json" }).then((_) => _);
       }
@@ -97,13 +110,29 @@ export default function ShareModal(props: Props) {
 
   function addPermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
     const n_docsActions = docsActions;
-    const id = (event.currentTarget as HTMLElement).id;
-    n_docsActions.push({ docId: id, action: "ADD" });
+    const id = (event.currentTarget as HTMLElement
+    ).id;
+    const role = (id.length === 10? "PATIENT" : "DOCTOR");
+    if (id.length === 10) {
+      n_docsActions.push({ docId: id, action: "ADD", role });
+    }
+    else {
+      n_docsActions.push({ docId: id, action: "ADD", role });
+    }
 
-    const selectedDoc = docs.find((element) => {
-      return String(element.id) === id;
-    });
+    let selectedDoc;
+    if (role === "DOCTOR") {
+      selectedDoc = docs.find((element) => {
+        return String(element.id) === id;
+      });
+    }
+    else {
+      selectedDoc = {id, insurance_number: id, first_name: "", last_name: "", street: "", number: 0, city: "", postcode: 0};
+    }
+
+    console.log(selectedDoc);
     const n_permissions = permissions;
+
 
     const isAlreadyPermitted = permissions.find((element) => {
       return String(element.id) === id;
@@ -117,16 +146,24 @@ export default function ShareModal(props: Props) {
 
   function removePermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
     const n_docsActions = docsActions;
-    const id = (event.currentTarget as HTMLElement).id;
-    n_docsActions.push({ docId: id, action: "DELETE" });
+    const id = (event.currentTarget as HTMLElement
+    ).id;
 
     const selectedDoc = permissions.find((element) => {
       return String(element.id) === id;
     });
     const n_permissions = permissions;
+
     if (selectedDoc !== undefined) {
+      if (selectedDoc.insurance_number !== "") {
+        n_docsActions.push({ docId: id, action: "DELETE", role: "PATIENT" });
+      }
+      else {
+        n_docsActions.push({ docId: id, action: "DELETE", role: "DOCTOR" });
+      }
       n_permissions.splice(permissions.indexOf(selectedDoc), 1);
     }
+
     setPermissions([...n_permissions]);
     setDocsActions([...n_docsActions]);
   }
@@ -141,6 +178,53 @@ export default function ShareModal(props: Props) {
     }
   }
 
+  function insNumValidate(event: React.ChangeEvent<HTMLInputElement>) {
+    setInputValue(event.target.value);
+    setInsValidity("NULL");
+    if (event.target.value.length === 10) {
+      const numToCheck = event.target.value;
+      const regex = /^([A-Z])([0-9]{8})([0-9])$/
+      const match = regex.exec(numToCheck)
+      if (match) {
+        const cardNo = (`0${match[1].charCodeAt(0) - 64}`).slice(-2) + match[2];
+        let sum = 0;
+        for (let i = 0; i < 10; i++) {
+          // eslint-disable-next-line security/detect-object-injection
+          let digit = Number(cardNo[i]);
+          if (i % 2 === 1) {
+            digit *= 2
+          }
+          if (digit > 9) {
+            digit -= 9;
+          }
+          sum += digit;
+        }
+        if (sum % 10 === Number(match[3])) {
+          axios.get(`http://localhost:8080/users/search/${numToCheck}`).then((response) => {
+            if (response.data === true) {
+              setInsValidity("VALID_USER");
+            }
+            else {
+              setInsValidity("VALID_NO_USER");
+            }
+          })
+        }
+        else {
+          setInsValidity("INVALID");
+        }
+      }
+      else {
+        setInsValidity("INVALID");
+      }
+    }
+    else if (event.target.value.length > 10) {
+      setInsValidity("INVALID");
+    }
+    else {
+      setInsValidity("PENDING");
+    }
+  }
+
   return (
     <>
       <Button style={{ background: "none", border: "none" }} onClick={handleShow}>
@@ -152,33 +236,75 @@ export default function ShareModal(props: Props) {
           <Modal.Title>Freigeben</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <b>{props.name}</b> ist für folgende Behandler:innen freigegeben:
+          {permissions.length === 0? <span><b>{props.name}</b> ist noch für keine Personen freigegeben.</span> : <span><b>{props.name}</b> ist für folgende Personen freigegeben:</span>}
           <div>
             {permissions.map((record) => (
               <div key={record.id} className={"permittedDoc"}>
-                <div style={{ display: "inline-block" }}>
-                  <b>
-                    {record.first_name} {record.last_name}
-                  </b>
-                  <br />
-                  <span>
-                    {record.street} {record.number}, {record.postcode} {record.city}
-                  </span>
-                </div>
-                <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
-                  <BsTrash className={"trashcan no-margin"}></BsTrash>
-                </Button>
+                {(record.id.length === 10 || (record.insurance_number !== "" && record.approbation === ""))?
+                  <div>
+                    <div style={{ display: "inline-block" }}>
+                      <b>
+                        {record.insurance_number}
+                      </b>
+                      <br />
+                      <span>
+                        <br/>
+                    </span>
+                    </div>
+                    <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
+                      <BsTrash className={"trashcan no-margin"}></BsTrash>
+                    </Button>
+                  </div>
+                  :
+                  <div>
+                    <div style={{ display: "inline-block" }}>
+                      <b>
+                        {record.first_name} {record.last_name}
+                      </b>
+                      <br />
+                      <span>
+                      {record.street} {record.number}, {record.postcode} {record.city}
+                    </span>
+                    </div>
+                    <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
+                      <BsTrash className={"trashcan no-margin"}></BsTrash>
+                    </Button>
+                  </div>}
               </div>
             ))}
           </div>
           <br />
           Weitere Freigaben hinzufügen:
-          <Form>
-            <Form.Group className="mb-3" controlId="formBasicGivenName">
-              <Form.Label></Form.Label>
-              <Form.Control type="Text" placeholder="Behandler:in suchen ..." value={inputValue} onChange={docSearch} />
-            </Form.Group>
-          </Form>
+          {props.role === "PATIENT"?
+            <Form>
+              <Form.Group className="mb-3" controlId="formBasicGivenName">
+                <Form.Label></Form.Label>
+                <Form.Control type="Text" placeholder="Behandler:in suchen ..." value={inputValue} onChange={docSearch} />
+              </Form.Group>
+            </Form>
+            :
+            <Form>
+              <Form.Group className="mb-3" controlId="formBasicGivenName">
+                <Form.Label></Form.Label>
+                <Form.Control type="Text" placeholder="Versicherungsnummer eingeben ..." value={inputValue} onChange={insNumValidate} style={{width: "79%", float: "left"}}/>
+                <div style={{display: "inline"}}>
+                  {insValidity === "PENDING"? <BsExclamationCircleFill className={"check pending"}></BsExclamationCircleFill> : ""}
+                  {(insValidity === "VALID_USER" || insValidity === "VALID_NO_USER")? <BsCheckCircleFill className={"check valid"}></BsCheckCircleFill> : ""}
+                  {insValidity === "INVALID"? <BsFillXCircleFill className={"check invalid"}></BsFillXCircleFill> : ""}
+                </div>
+                <Button className={"btn-add"}  disabled={insValidity !== "VALID_USER"} id={inputValue} onClick={addPermission}>
+                  <BsPlusLg className={"trashcan no-margin"}></BsPlusLg>
+                </Button>
+                {insValidity === "VALID_NO_USER"?
+                  <Alert variant={"danger"} className={"alert"}>
+                    Die Person mit dieser Versicherungsnummer hat einer Freigabe von Dokumenten nicht zugestimmt.
+                  </Alert>
+                  : ""}
+              </Form.Group>
+            </Form>
+
+          }
+
           {docs.map((record) => (
             <div key={record.id} className={"permittedDoc"}>
               <div style={{ display: "inline-block" }}>
@@ -201,7 +327,7 @@ export default function ShareModal(props: Props) {
             Abbrechen
           </Button>
           <Button variant="primary" onClick={handlePermit}>
-            Freigeben
+            Speichern
           </Button>
         </Modal.Footer>
       </Modal>
