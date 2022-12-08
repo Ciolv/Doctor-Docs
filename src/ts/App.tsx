@@ -9,6 +9,7 @@ import { Security } from "./page/Security";
 import { AuthenticationResult } from "@azure/msal-browser";
 import axios from "axios";
 import { getIdToken, getUserAccountId } from "./utils/AuthHelper";
+import { Help } from "./page/Help";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
@@ -92,6 +93,7 @@ export default class App extends React.Component<Props, State> {
                 }
               />
               <Route path="/security" element={<Security />} />
+              <Route path="/help" element={<Help />} />
               <Route path="*" element={<Navigate replace to="/record" />} />
             </Routes>
           </div>
