@@ -114,10 +114,10 @@ export default function ShareModal(props: Props) {
     ).id;
     const role = (id.length === 10? "PATIENT" : "DOCTOR");
     if (id.length === 10) {
-      n_docsActions.push({ docId: id, action: "ADD", role: role });
+      n_docsActions.push({ docId: id, action: "ADD", role });
     }
     else {
-      n_docsActions.push({ docId: id, action: "ADD", role: role });
+      n_docsActions.push({ docId: id, action: "ADD", role });
     }
 
     let selectedDoc;
@@ -127,7 +127,7 @@ export default function ShareModal(props: Props) {
       });
     }
     else {
-      selectedDoc = {id: id, insurance_number: id, first_name: "", last_name: "", street: "", number: 0, city: "", postcode: 0};
+      selectedDoc = {id, insurance_number: id, first_name: "", last_name: "", street: "", number: 0, city: "", postcode: 0};
     }
 
     console.log(selectedDoc);
@@ -184,22 +184,22 @@ export default function ShareModal(props: Props) {
     if (event.target.value.length === 10) {
       const numToCheck = event.target.value;
       const regex = /^([A-Z])([0-9]{8})([0-9])$/
-      const m = regex.exec(numToCheck)
-      if (m) {
-        const cardNo = ("0" + (m[1].charCodeAt(0) - 64)).slice(-2) + m[2];
+      const match = regex.exec(numToCheck)
+      if (match) {
+        const cardNo = (`0${match[1].charCodeAt(0) - 64}`).slice(-2) + match[2];
         let sum = 0;
         for (let i = 0; i < 10; i++) {
           // eslint-disable-next-line security/detect-object-injection
-          let d = Number(cardNo[i]);
+          let digit = Number(cardNo[i]);
           if (i % 2 === 1) {
-            d *= 2
+            digit *= 2
           }
-          if (d > 9) {
-            d -= 9;
+          if (digit > 9) {
+            digit -= 9;
           }
-          sum += d;
+          sum += digit;
         }
-        if (sum % 10 === Number(m[3])) {
+        if (sum % 10 === Number(match[3])) {
           axios.get(`http://localhost:8080/users/search/${numToCheck}`).then((response) => {
             if (response.data === true) {
               setInsValidity("VALID_USER");
