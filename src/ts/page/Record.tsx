@@ -42,12 +42,14 @@ export class Record extends React.Component<Props, State> {
           <Col id="main-content" xs={10}>
             <div className={"input-bar"}>
               <input id="fileInput" type="file" onChange={(e) => this.handleFileUpload(e)} hidden />
-              <label id="fileInputLabel" htmlFor="fileInput">
-                <IoAddCircle />
+              <label id="fileInputLabel" tabIndex={0} htmlFor="fileInput">
+                <IoAddCircle title={"Hinzufügen"} />
               </label>
             </div>
             {this.state.role === "DOCTOR_UNVERIFIED" ? (
               <Alert
+                tabIndex={0}
+                title={"Hinweis"}
                 show={this.state.showAlert}
                 className={"alert"}
                 dismissible

@@ -9,6 +9,9 @@ nav.navbar {
   padding: 0 0.5rem;
   border-bottom: 1px solid $light-gray;
 }
+.nav-link.active {
+  color: rgba(158, 162, 254, 0.94) !important;
+}
 
 .security-button {
   margin-left: 2rem;

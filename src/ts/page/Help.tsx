@@ -188,7 +188,7 @@ export class Help extends React.Component<Props, State> {
                   /* eslint-disable-next-line no-restricted-globals */
                   onClick={() => {open("mailto:reanimated_nanosensors@simplelogin.com")}}>
             <span>
-              <AiOutlineMail></AiOutlineMail> E-Mail</span></Button>
+              <AiOutlineMail title={"Mail"}></AiOutlineMail> E-Mail</span></Button>
         </Row>
       </Container>
     );

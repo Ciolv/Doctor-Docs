@@ -236,8 +236,8 @@ export default function ShareModal(props: Props) {
 
   return (
     <>
-      <Button style={{ background: "none", border: "none" }} onClick={handleShow}>
-        <BsShare className={"trashcan"} />
+      <Button title={"Teilen"} style={{ background: "none", border: "none" }} onClick={handleShow}>
+        <BsShare title={"Löschen"} className={"trashcan"}/>
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -267,7 +267,7 @@ export default function ShareModal(props: Props) {
                       </span>
                     </div>
                     <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
-                      <BsTrash className={"trashcan no-margin"}></BsTrash>
+                      <BsTrash title={"Löschen"} className={"trashcan no-margin"}></BsTrash>
                     </Button>
                   </div>
                 ) : (
@@ -282,7 +282,7 @@ export default function ShareModal(props: Props) {
                       </span>
                     </div>
                     <Button className={"btn-delete"} id={String(record.id)} onClick={removePermission}>
-                      <BsTrash className={"trashcan no-margin"}></BsTrash>
+                      <BsTrash title={"Löschen"} className={"trashcan no-margin"}></BsTrash>
                     </Button>
                   </div>
                 )}
@@ -315,25 +315,15 @@ export default function ShareModal(props: Props) {
                   style={{ width: "79%", float: "left" }}
                 />
                 <div style={{ display: "inline" }}>
-                  {insValidity === "PENDING" ? (
-                    <BsExclamationCircleFill className={"check pending"}></BsExclamationCircleFill>
-                  ) : (
-                    ""
-                  )}
-                  {insValidity === "VALID_USER" || insValidity === "VALID_NO_USER" ? (
-                    <BsCheckCircleFill className={"check valid"}></BsCheckCircleFill>
-                  ) : (
-                    ""
-                  )}
-                  {insValidity === "INVALID" ? <BsFillXCircleFill className={"check invalid"}></BsFillXCircleFill> : ""}
+                  {insValidity === "PENDING" ? <BsExclamationCircleFill title={"Unvollständig"}
+                    className={"check pending"}></BsExclamationCircleFill> : ""}
+                  {(insValidity === "VALID_USER" || insValidity === "VALID_NO_USER"
+                  ) ? <BsCheckCircleFill title={"Gültig"}  className={"check valid"}></BsCheckCircleFill> : ""}
+                  {insValidity === "INVALID" ? <BsFillXCircleFill title={"Ungültig"} className={"check invalid"}></BsFillXCircleFill> : ""}
                 </div>
-                <Button
-                  className={"btn-add"}
-                  disabled={insValidity !== "VALID_USER"}
-                  id={inputValue}
-                  onClick={addPermission}
-                >
-                  <BsPlusLg className={"trashcan no-margin"}></BsPlusLg>
+                <Button className={"btn-add"} disabled={insValidity !== "VALID_USER"} id={inputValue}
+                        onClick={addPermission}>
+                  <BsPlusLg title={"Hinzufügen"} className={"trashcan no-margin"}></BsPlusLg>
                 </Button>
                 {insValidity === "VALID_NO_USER" ? (
                   <Alert variant={"danger"} className={"alert"}>
@@ -357,7 +347,7 @@ export default function ShareModal(props: Props) {
                 </span>
               </div>
               <Button className={"btn-add"} id={String(record.id)} onClick={addPermission}>
-                <BsPlusLg className={"trashcan no-margin"}></BsPlusLg>
+                <BsPlusLg title={"Hinzufügen"} className={"trashcan no-margin"}></BsPlusLg>
               </Button>
             </div>
           ))}

@@ -5,7 +5,7 @@ import ShareModal from "./ShareModal";
 import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
-import { BsDownload, BsStar, BsStarFill } from "react-icons/bs";
+import { BsDownload, BsFileEarmarkText, BsStar, BsStarFill } from "react-icons/bs";
 import { getIdToken } from "../utils/AuthHelper";
 
 type Props = {
@@ -93,6 +93,7 @@ export class RecordList extends React.Component<Props, State> {
 
   render() {
     const files: File[] = [];
+    console.log(this.props.view);
     this.state.files.forEach((file) => {
       if (
         this.props.view === "record" ||
@@ -100,6 +101,7 @@ export class RecordList extends React.Component<Props, State> {
         (this.props.view === "marked" && file.marked) ||
         (this.props.view === "newest" && file.lastUpdateTime.getDate() > new Date().getDate() - 8)
       ) {
+        console.log("push");
         files.push(file);
       }
     });
@@ -120,28 +122,28 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
           </Row>
 
-          {files.map((file) => (
-            <Row className="file-record" key={file.id} id={file.id.toString()}>
-              <Col className="file-thumbnail" xs={"1"}>
-                IMG
-              </Col>
-              <Col className="file-name" xs={"6"}>
-                {file.name}
-              </Col>
-              <Col className="file-options" xs={"2"}>
-                <div>
-                  <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)} className={"btn-icon"}>
-                    {file.marked ? <BsStarFill className={"star yellow"} /> : <BsStar className={"star"} />}
-                  </Button>
-                  <Button onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
-                    <BsDownload className={"download"} />
-                  </Button>
-                  <DeleteModal
-                    onSuccess={(id) => this.handleOnSuccess(id)}
-                    id={file.id}
-                    name={file.name}
-                    owner={file.ownerId}
-                  />
+        {files.map((file) => (
+          <Row className="file-record" key={file.id} id={file.id.toString()}>
+            <Col className="file-thumbnail" xs={"1"}>
+              <BsFileEarmarkText title={"File-Icon"} style={{scale: "2"}}></BsFileEarmarkText>
+            </Col>
+            <Col className="file-name" xs={"6"}>
+              {file.name}
+            </Col>
+            <Col className="file-options" xs={"2"}>
+              <div>
+                <Button title={"Markieren"} value={String(file.marked)} onClick={(e) => this.updateMarked(e)} className={"btn-icon"}>
+                  {file.marked ? <BsStarFill title={"Markiert"} className={"star yellow"} /> : <BsStar title={"Markieren"} className={"star"} />}
+                </Button>
+                <Button title={"Herunterladen"} onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
+                  <BsDownload title={"Herunterladen"} className={"download"} />
+                </Button>
+                <DeleteModal
+                  onSuccess={(id) => this.handleOnSuccess(id)}
+                  id={file.id}
+                  name={file.name}
+                  owner={file.ownerId}
+                />
 
                   {this.props.role === "PATIENT" ||
                   (this.props.role === "DOCTOR" && file.ownerId === this.props.identityToken) ? (
