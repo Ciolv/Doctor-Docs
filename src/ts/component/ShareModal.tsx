@@ -8,7 +8,7 @@ import {
   BsFillXCircleFill,
   BsPlusLg,
   BsShare,
-  BsTrash
+  BsTrash,
 } from "react-icons/bs";
 import { Alert, Form } from "react-bootstrap";
 import axios from "axios";
@@ -72,7 +72,7 @@ export default function ShareModal(props: Props) {
             permittedDocs.push(currentDoc);
           });
         }
-    });
+      });
     });
     return permittedDocs;
   }
@@ -112,11 +112,11 @@ export default function ShareModal(props: Props) {
     const n_docsActions = docsActions;
     const id = (event.currentTarget as HTMLElement
     ).id;
-    const role = (id.length === 10? "PATIENT" : "DOCTOR");
+    const role = (id.length === 10 ? "PATIENT" : "DOCTOR"
+    );
     if (id.length === 10) {
       n_docsActions.push({ docId: id, action: "ADD", role });
-    }
-    else {
+    } else {
       n_docsActions.push({ docId: id, action: "ADD", role });
     }
 
@@ -125,9 +125,9 @@ export default function ShareModal(props: Props) {
       selectedDoc = docs.find((element) => {
         return String(element.id) === id;
       });
-    }
-    else {
-      selectedDoc = {id, insurance_number: id, first_name: "", last_name: "", street: "", number: 0, city: "", postcode: 0};
+    } else {
+      selectedDoc =
+        { id, insurance_number: id, first_name: "", last_name: "", street: "", number: 0, city: "", postcode: 0 };
     }
 
     console.log(selectedDoc);
@@ -157,8 +157,7 @@ export default function ShareModal(props: Props) {
     if (selectedDoc !== undefined) {
       if (selectedDoc.insurance_number !== "") {
         n_docsActions.push({ docId: id, action: "DELETE", role: "PATIENT" });
-      }
-      else {
+      } else {
         n_docsActions.push({ docId: id, action: "DELETE", role: "DOCTOR" });
       }
       n_permissions.splice(permissions.indexOf(selectedDoc), 1);
@@ -171,10 +170,17 @@ export default function ShareModal(props: Props) {
   function docSearch(event: React.ChangeEvent<HTMLInputElement>) {
     setInputValue(event.target.value);
     if (event.target.value !== "" && event.target.value !== undefined) {
-      axios.get(`http://localhost:8080/doctors/${event.target.value}`).then((response) => {
-        const doctors = response.data;
-        setDocs(doctors);
-      });
+      getIdToken().then(jwt => {
+        const uri = `http://localhost:8080/doctors/${event.target.value}`;
+        const body = {
+          jwt,
+        };
+        axios.post(uri, body).then((response) => {
+          const doctors = response.data;
+          setDocs(doctors);
+        });
+      })
+
     }
   }
 
@@ -186,7 +192,8 @@ export default function ShareModal(props: Props) {
       const regex = /^([A-Z])([0-9]{8})([0-9])$/
       const match = regex.exec(numToCheck)
       if (match) {
-        const cardNo = (`0${match[1].charCodeAt(0) - 64}`).slice(-2) + match[2];
+        const cardNo = (`0${match[1].charCodeAt(0) - 64}`
+                       ).slice(-2) + match[2];
         let sum = 0;
         for (let i = 0; i < 10; i++) {
           // eslint-disable-next-line security/detect-object-injection
@@ -207,32 +214,28 @@ export default function ShareModal(props: Props) {
           axios.post(`http://localhost:8080/users/search/${numToCheck}`, body).then((response) => {
             if (response.data === true) {
               setInsValidity("VALID_USER");
-            }
-            else {
+            } else {
               setInsValidity("VALID_NO_USER");
             }
           });
-        }
-        else {
+        } else {
           setInsValidity("INVALID");
         }
-      }
-      else {
+      } else {
         setInsValidity("INVALID");
       }
-    }
-    else if (event.target.value.length > 10) {
-      setInsValidity("INVALID");
-    }
-    else {
-      setInsValidity("PENDING");
-    }
+    } else
+      if (event.target.value.length > 10) {
+        setInsValidity("INVALID");
+      } else {
+        setInsValidity("PENDING");
+      }
   }
 
   return (
     <>
       <Button style={{ background: "none", border: "none" }} onClick={handleShow}>
-        <BsShare className={"trashcan"} />
+        <BsShare className={"trashcan"}/>
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -240,17 +243,19 @@ export default function ShareModal(props: Props) {
           <Modal.Title>Freigeben</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {permissions.length === 0? <span><b>{props.name}</b> ist noch für keine Personen freigegeben.</span> : <span><b>{props.name}</b> ist für folgende Personen freigegeben:</span>}
+          {permissions.length === 0 ? <span><b>{props.name}</b> ist noch für keine Personen freigegeben.</span> : <span><b>{props.name}</b> ist für folgende Personen freigegeben:</span>}
           <div>
             {permissions.map((record) => (
               <div key={record.id} className={"permittedDoc"}>
-                {(record.id.length === 10 || (record.insurance_number !== "" && record.approbation === ""))?
+                {(record.id.length === 10 || (record.insurance_number !== "" && record.approbation === ""
+                )
+                ) ?
                   <div>
                     <div style={{ display: "inline-block" }}>
                       <b>
                         {record.insurance_number}
                       </b>
-                      <br />
+                      <br/>
                       <span>
                         <br/>
                     </span>
@@ -265,7 +270,7 @@ export default function ShareModal(props: Props) {
                       <b>
                         {record.first_name} {record.last_name}
                       </b>
-                      <br />
+                      <br/>
                       <span>
                       {record.street} {record.number}, {record.postcode} {record.city}
                     </span>
@@ -277,29 +282,34 @@ export default function ShareModal(props: Props) {
               </div>
             ))}
           </div>
-          <br />
+          <br/>
           Weitere Freigaben hinzufügen:
-          {props.role === "PATIENT"?
+          {props.role === "PATIENT" ?
             <Form>
               <Form.Group className="mb-3" controlId="formBasicGivenName">
                 <Form.Label></Form.Label>
-                <Form.Control type="Text" placeholder="Behandler:in suchen ..." value={inputValue} onChange={docSearch} />
+                <Form.Control type="Text" placeholder="Behandler:in suchen ..." value={inputValue}
+                              onChange={docSearch}/>
               </Form.Group>
             </Form>
             :
             <Form>
               <Form.Group className="mb-3" controlId="formBasicGivenName">
                 <Form.Label></Form.Label>
-                <Form.Control type="Text" placeholder="Versicherungsnummer eingeben ..." value={inputValue} onChange={insNumValidate} style={{width: "79%", float: "left"}}/>
-                <div style={{display: "inline"}}>
-                  {insValidity === "PENDING"? <BsExclamationCircleFill className={"check pending"}></BsExclamationCircleFill> : ""}
-                  {(insValidity === "VALID_USER" || insValidity === "VALID_NO_USER")? <BsCheckCircleFill className={"check valid"}></BsCheckCircleFill> : ""}
-                  {insValidity === "INVALID"? <BsFillXCircleFill className={"check invalid"}></BsFillXCircleFill> : ""}
+                <Form.Control type="Text" placeholder="Versicherungsnummer eingeben ..." value={inputValue}
+                              onChange={insNumValidate} style={{ width: "79%", float: "left" }}/>
+                <div style={{ display: "inline" }}>
+                  {insValidity === "PENDING" ? <BsExclamationCircleFill
+                    className={"check pending"}></BsExclamationCircleFill> : ""}
+                  {(insValidity === "VALID_USER" || insValidity === "VALID_NO_USER"
+                  ) ? <BsCheckCircleFill className={"check valid"}></BsCheckCircleFill> : ""}
+                  {insValidity === "INVALID" ? <BsFillXCircleFill className={"check invalid"}></BsFillXCircleFill> : ""}
                 </div>
-                <Button className={"btn-add"}  disabled={insValidity !== "VALID_USER"} id={inputValue} onClick={addPermission}>
+                <Button className={"btn-add"} disabled={insValidity !== "VALID_USER"} id={inputValue}
+                        onClick={addPermission}>
                   <BsPlusLg className={"trashcan no-margin"}></BsPlusLg>
                 </Button>
-                {insValidity === "VALID_NO_USER"?
+                {insValidity === "VALID_NO_USER" ?
                   <Alert variant={"danger"} className={"alert"}>
                     Die Person mit dieser Versicherungsnummer hat einer Freigabe von Dokumenten nicht zugestimmt.
                   </Alert>
@@ -315,7 +325,7 @@ export default function ShareModal(props: Props) {
                 <b>
                   {record.first_name} {record.last_name}
                 </b>
-                <br />
+                <br/>
                 <span>
                   {record.street} {record.number}, {record.postcode} {record.city}
                 </span>
