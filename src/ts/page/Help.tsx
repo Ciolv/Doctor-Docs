@@ -184,7 +184,7 @@ export class Help extends React.Component<Props, State> {
             Kontaktmöglichkeiten
           </h3>
 
-          <Button variant={"primary"} style={{margin: "0% 0% 5% 0%", height: "3em"}} type={"button"}
+          <Button variant={"primary"} title={"E-Mail senden"} style={{margin: "0% 0% 5% 0%", height: "3em"}} type={"button"}
                   /* eslint-disable-next-line no-restricted-globals */
                   onClick={() => {open("mailto:reanimated_nanosensors@simplelogin.com")}}>
             <span>
