@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import "../../css/ShareModal.scss";
@@ -13,8 +12,9 @@ import {
 } from "react-icons/bs";
 import { Alert, Form } from "react-bootstrap";
 import axios from "axios";
-import { getUserAccountId } from "../utils/AuthHelper";
+import { getIdToken, getUserAccountId } from "../utils/AuthHelper";
 import { User } from "../models/User";
+import { FilePermission } from "../models/File";
 
 type Props = {
   id: string;
@@ -44,23 +44,35 @@ const checkMock: DocActions[] = [];
 export default function ShareModal(props: Props) {
   function getPermissions() {
     const permittedDocs: User[] = [];
-    props.permissions.forEach((doc) => {
-      if (doc.permission === 0 && doc.userId !== null && doc.userId !== undefined) {
-        axios.get(`http://localhost:8080/users/${doc.userId}`).then((docMeta) => {
-          const currentDoc: User = {
-            id: docMeta.data.id,
-            first_name: docMeta.data.first_name,
-            last_name: docMeta.data.last_name,
-            number: docMeta.data.number,
-            street: docMeta.data.street,
-            postcode: docMeta.data.postcode,
-            city: docMeta.data.city,
-            insurance_number: docMeta.data.insurance_number,
-            insurance: docMeta.data.insurance
-          };
-          permittedDocs.push(currentDoc);
-        });
-      }
+    getIdToken().then((jwt) => {
+      const body = { jwt };
+      props.permissions.forEach((doc) => {
+        const url = `http://localhost:8080/doctors/data/${doc.userId}`;
+        const canRead = doc.permission >= FilePermission.Read;
+        const hasId = doc.userId !== null && doc.userId !== undefined;
+        const alreadyIncluded = permissions
+          ? permissions.some((d) => permittedDocs.some((doctor) => d.id === doctor.id))
+          : false;
+        const isOwnAccount = getUserAccountId() === doc.userId;
+
+        if (canRead && hasId && !alreadyIncluded && !isOwnAccount) {
+          axios.post(url, body).then((docMeta) => {
+            const currentDoc: User = {
+              id: docMeta.data.id,
+              first_name: docMeta.data.first_name,
+              last_name: docMeta.data.last_name,
+              number: docMeta.data.last_name,
+              street: docMeta.data.street,
+              postcode: docMeta.data.postcode,
+              city: docMeta.data.city,
+              insurance_number: docMeta.data.insurance_number,
+              insurance: docMeta.data.insurance
+            };
+
+            permittedDocs.push(currentDoc);
+          });
+        }
+    });
     });
     return permittedDocs;
   }
@@ -79,24 +91,22 @@ export default function ShareModal(props: Props) {
     setShow(false);
   };
 
-  function handlePermit() {
+  async function handlePermit() {
     setShow(false);
-    const userId = getUserAccountId();
     if (docsActions.length > 0) {
-      docsActions.forEach((permission) => {
-        axios
-          .post(`http://localhost:8080/files/permit/${props.id}?userId=${userId}`, {
-            userId: permission.docId,
-            action: permission.action,
-            role: permission.role
-          })
-          .then((response) => {
-            console.log(response);
-          });
-      });
+      const jwt = await getIdToken();
+      for (const permission of docsActions) {
+        const uri = `http://localhost:8080/files/permit/${props.id}`;
+        const body = {
+          jwt,
+          userId: permission.docId,
+          action: permission.action,
+          role: permission.role
+        };
+        axios.post(uri, body, { responseType: "json" }).then((_) => _);
+      }
     }
   }
-
 
   function addPermission(event: React.MouseEvent<HTMLElement, MouseEvent>) {
     const n_docsActions = docsActions;
@@ -142,7 +152,6 @@ export default function ShareModal(props: Props) {
     const selectedDoc = permissions.find((element) => {
       return String(element.id) === id;
     });
-
     const n_permissions = permissions;
 
     if (selectedDoc !== undefined) {
@@ -219,7 +228,7 @@ export default function ShareModal(props: Props) {
   return (
     <>
       <Button style={{ background: "none", border: "none" }} onClick={handleShow}>
-        <BsShare className={"trashcan"}/>
+        <BsShare className={"trashcan"} />
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -233,7 +242,7 @@ export default function ShareModal(props: Props) {
               <div key={record.id} className={"permittedDoc"}>
                 {(record.id.length === 10 || (record.insurance_number !== "" && record.approbation === ""))?
                   <div>
-                    <div style={{ "display": "inline-block" }}>
+                    <div style={{ display: "inline-block" }}>
                       <b>
                         {record.insurance_number}
                       </b>
@@ -248,7 +257,7 @@ export default function ShareModal(props: Props) {
                   </div>
                   :
                   <div>
-                    <div style={{ "display": "inline-block" }}>
+                    <div style={{ display: "inline-block" }}>
                       <b>
                         {record.first_name} {record.last_name}
                       </b>
@@ -263,7 +272,6 @@ export default function ShareModal(props: Props) {
                   </div>}
               </div>
             ))}
-
           </div>
           <br />
           Weitere Freigaben hinzufügen:
@@ -299,7 +307,7 @@ export default function ShareModal(props: Props) {
 
           {docs.map((record) => (
             <div key={record.id} className={"permittedDoc"}>
-              <div style={{"display": "inline-block"}}>
+              <div style={{ display: "inline-block" }}>
                 <b>
                   {record.first_name} {record.last_name}
                 </b>

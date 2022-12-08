@@ -3,9 +3,10 @@ import { Col, Container, Row } from "react-bootstrap";
 import { RecordNav } from "../component/RecordNav";
 import "../../css/Record.scss";
 import { RecordList } from "../component/RecordList";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { IoAddCircle } from "react-icons/io5";
 import { User } from "../models/User";
+import { getIdToken } from "../utils/AuthHelper";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
@@ -13,8 +14,8 @@ type Props = {
 };
 // eslint-disable-next-line @typescript-eslint/ban-types
 type State = {
-  rerender: boolean,
-  role: "PATIENT" | "DOCTOR_UNVERIFIED" | "DOCTOR"
+  rerender: boolean;
+  role: "PATIENT" | "DOCTOR_UNVERIFIED" | "DOCTOR";
 };
 
 export class Record extends React.Component<Props, State> {
@@ -22,32 +23,12 @@ export class Record extends React.Component<Props, State> {
     super(props);
     this.state = {
       rerender: false,
-      role: "PATIENT"
-    }
+      role: "PATIENT",
+    };
   }
 
   componentDidMount() {
     this.getRole();
-  }
-
-  private async getRole() {
-    let userData: User;
-    await axios.get(`http://localhost:8080/users/${this.props.userId}`).then(
-      (result: AxiosResponse<User>) => {
-        userData = result.data;
-        if (userData.approbation !== "") {
-          if (userData.verified === true) {
-            this.setState({role: "DOCTOR"});
-          }
-          else {
-            this.setState({role: "DOCTOR_UNVERIFIED"});
-          }
-        }
-        else {
-          this.setState({role: "PATIENT"});
-        }
-
-      });
   }
 
   render() {
@@ -84,13 +65,33 @@ export class Record extends React.Component<Props, State> {
     }));
   }
 
-  private postFile(inputFiles: FileList | null) {
+  private async getRole() {
+    const uri = "http://localhost:8080/users/";
+    const body = { jwt: await getIdToken() };
+    const result = await axios.post<User>(uri, body);
+    const userData = result.data;
+
+    if (userData.approbation !== "") {
+      if (userData.verified === true) {
+        this.setState({ role: "DOCTOR" });
+      } else {
+        this.setState({ role: "DOCTOR_UNVERIFIED" });
+      }
+    } else {
+      this.setState({ role: "PATIENT" });
+    }
+  }
+
+  private async postFile(inputFiles: FileList | null) {
     if (inputFiles !== null) {
       if (inputFiles.length !== 0) {
         const file = inputFiles[0];
+        const jwt = await getIdToken();
         const formData = new FormData();
         formData.set("file", file);
-        axios.post(`http://localhost:8080/files/upload?userId=${this.props.userId}`, formData);
+        formData.set("jwt", jwt ?? "");
+        const url = "http://localhost:8080/files/upload";
+        axios.post(url, formData);
       }
     }
   }
