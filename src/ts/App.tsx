@@ -1,7 +1,6 @@
 import React from "react";
 import "../css/App.css";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { Home } from "./page/Home";
 import { Login } from "./page/Login";
 import { Navigation } from "./component/Navigation";
 import { Record } from "./page/Record";
@@ -76,8 +75,7 @@ export default class App extends React.Component<Props, State> {
           <div>
             <Navigation authenticated={this.authenticated()} />
             <Routes>
-              <Route path="/" element={<Navigate replace to="/home" />} />
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Navigate replace to="/record" />} />
               <Route path="/record">
                 <Route index element={<Record userId={this.state.identityToken} />} />
                 <Route path="newest" element={<Record userId={this.state.identityToken} />} />
@@ -95,6 +93,7 @@ export default class App extends React.Component<Props, State> {
               />
               <Route path="/security" element={<Security />} />
               <Route path={"/login"} element={<Login onLogin={this.handleLogin} />} />
+              <Route path="*" element={<Navigate replace to="/record" />} />
             </Routes>
           </div>
         );
