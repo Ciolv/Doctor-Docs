@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { Accordion, Button, Container, Row } from "react-bootstrap";
 import "../../css/Security.scss";
 import { BsPlusLg, BsShare, BsTrash } from "react-icons/bs";
