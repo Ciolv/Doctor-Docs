@@ -5,7 +5,7 @@ import ShareModal from "./ShareModal";
 import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
-import { BsDownload, BsStar, BsStarFill } from "react-icons/bs";
+import { BsDownload, BsFileEarmarkText, BsStar, BsStarFill } from "react-icons/bs";
 import { getIdToken } from "../utils/AuthHelper";
 
 type Props = {
@@ -106,37 +106,37 @@ export class RecordList extends React.Component<Props, State> {
       }
     });
 
-    return (<div>
-      <Container fluid className="record-list">
-
-        <Row className="file-record file-record-headline">
-          <Col className="file-thumbnail" xs={"1"}></Col>
-          <Col className="file-name" xs={"8"}>
-            Name
-          </Col>
-          <Col className="file-size" xs={"1"}>
-            Größe
-          </Col>
-          <Col className="file-modify-date" xs={"2"}>
-            Geändert
-          </Col>
-        </Row>
+    return (
+      <div>
+        <Container fluid className="record-list">
+          <Row className="file-record file-record-headline">
+            <Col className="file-thumbnail" xs={"1"}></Col>
+            <Col className="file-name" xs={"8"}>
+              Name
+            </Col>
+            <Col className="file-size" xs={"1"}>
+              Größe
+            </Col>
+            <Col className="file-modify-date" xs={"2"}>
+              Geändert
+            </Col>
+          </Row>
 
         {files.map((file) => (
           <Row className="file-record" key={file.id} id={file.id.toString()}>
             <Col className="file-thumbnail" xs={"1"}>
-              IMG
+              <BsFileEarmarkText title={"File-Icon"} style={{scale: "2"}}></BsFileEarmarkText>
             </Col>
             <Col className="file-name" xs={"6"}>
               {file.name}
             </Col>
             <Col className="file-options" xs={"2"}>
               <div>
-                <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)} className={"btn-icon"}>
-                  {file.marked ? <BsStarFill className={"star yellow"} /> : <BsStar className={"star"} />}
+                <Button title={"Markieren"} value={String(file.marked)} onClick={(e) => this.updateMarked(e)} className={"btn-icon"}>
+                  {file.marked ? <BsStarFill title={"Markiert"} className={"star yellow"} /> : <BsStar title={"Markieren"} className={"star"} />}
                 </Button>
-                <Button onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
-                  <BsDownload className={"download"} />
+                <Button title={"Herunterladen"} onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
+                  <BsDownload title={"Herunterladen"} className={"download"} />
                 </Button>
                 <DeleteModal
                   onSuccess={(id) => this.handleOnSuccess(id)}
@@ -145,30 +145,31 @@ export class RecordList extends React.Component<Props, State> {
                   owner={file.ownerId}
                 />
 
-                {this.props.role === "PATIENT" ||
-                (this.props.role === "DOCTOR" && file.ownerId === this.props.identityToken) ? (
-                  <ShareModal
-                    id={file.id}
-                    name={file.name}
-                    owner={file.ownerId}
-                    identityToken={this.props.identityToken}
-                    permissions={file.users}
-                    role={this.props.role}
-                  />
-                ) : (
-                  ""
-                )}
-              </div>
-            </Col>
-            <Col className="file-size" xs={"1"}>
-              {file.getFileSize()}
-            </Col>
-            <Col className="file-modify-date" xs={"2"}>
-              {file.lastUpdateTime.toDateString()}
-            </Col>
-          </Row>
-        ))}
-      </Container></div>
+                  {this.props.role === "PATIENT" ||
+                  (this.props.role === "DOCTOR" && file.ownerId === this.props.identityToken) ? (
+                    <ShareModal
+                      id={file.id}
+                      name={file.name}
+                      owner={file.ownerId}
+                      identityToken={this.props.identityToken}
+                      permissions={file.users}
+                      role={this.props.role}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </Col>
+              <Col className="file-size" xs={"1"}>
+                {file.getFileSize()}
+              </Col>
+              <Col className="file-modify-date" xs={"2"}>
+                {file.lastUpdateTime.toDateString()}
+              </Col>
+            </Row>
+          ))}
+        </Container>
+      </div>
     );
   }
 

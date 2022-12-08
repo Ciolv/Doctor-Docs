@@ -43,8 +43,8 @@ export default function ShareModal(props: Props) {
 
   return (
     <>
-      <Button style={{ background: "none", border: "none" }} onClick={handleShow}>
-        <BsTrash className={"trashcan"} />
+      <Button title={"Löschen"} style={{ background: "none", border: "none" }} onClick={handleShow}>
+        <BsTrash title={"Löschen"} className={"trashcan"} />
       </Button>
 
       <Modal show={show} onHide={handleClose}>

@@ -94,7 +94,6 @@ export default class App extends React.Component<Props, State> {
               />
               <Route path="/security" element={<Security />} />
               <Route path="/help" element={<Help />} />
-              <Route path={"/login"} element={<Login onLogin={this.handleLogin} />} />
               <Route path="*" element={<Navigate replace to="/record" />} />
             </Routes>
           </div>
