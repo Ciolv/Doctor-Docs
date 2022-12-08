@@ -73,7 +73,7 @@ export default class App extends React.Component<Props, State> {
     if (this.authenticated()) {
       if (this.state.registrationCompleted) {
         return (
-          <div tabIndex={0}>
+          <div>
             <Navigation authenticated={this.authenticated()} />
             <Routes>
               <Route path="/" element={<Navigate replace to="/record" />} />
