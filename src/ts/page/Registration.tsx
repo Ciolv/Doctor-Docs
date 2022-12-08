@@ -35,10 +35,7 @@ export class Registration extends React.Component<Props, User> {
         jwt,
       };
       const response = await axios.post(uri, body);
-      if (response.status === 204) {
-        return;
-      }
-      if (response.data !== null && response.data !== undefined) {
+      if (response.status === 200 && response.data !== null && response.data !== undefined) {
         this.setState(response.data);
       }
     });
@@ -50,7 +47,7 @@ export class Registration extends React.Component<Props, User> {
 
     return (
       <Tabs
-        defaultActiveKey={isPatient ? "patients" : "doctors"}
+        defaultActiveKey={isDoctor ? "doctors" : "patients"}
         id="uncontrolled-tab-example"
         className="mb-3"
         justify

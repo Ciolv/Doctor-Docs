@@ -4,7 +4,6 @@ import { NavLink, Outlet } from "react-router-dom";
 
 import Heartbeat from "../../img/Heartbeat.svg";
 import "../../css/Navigation.scss";
-import { AiFillHome } from "react-icons/ai";
 import { LabeledIcon } from "./LabeledIcon";
 import { FaBox } from "react-icons/fa";
 import { BsFillShieldLockFill } from "react-icons/bs";
@@ -48,11 +47,6 @@ export class Navigation extends React.Component<Props, State> {
             <img src={Heartbeat} alt="Heartbeat" className="logo"/>
           </Navbar.Brand>
           <Nav>
-            <Nav.Item>
-              <Nav.Link as={NavLink} to="/home">
-                <LabeledIcon text="Start" icon={AiFillHome}/>
-              </Nav.Link>
-            </Nav.Item>
             <Nav.Item>
               <Nav.Link as={NavLink} to="/record">
                 <LabeledIcon text="Akte" icon={FaBox}/>
