@@ -98,7 +98,7 @@ export class RecordList extends React.Component<Props, State> {
     this.state.files.forEach((file) => {
       if (
         this.props.view === "record" ||
-        (this.props.view === "shared" && file.users.length > 2) ||
+        (this.props.view === "shared" && file.users.length > 1) ||
         (this.props.view === "marked" && file.marked) ||
         (this.props.view === "newest" && file.lastUpdateTime.getDate() > new Date().getDate() - 8)
       ) {
