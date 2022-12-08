@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Alert, Col, Container, Row } from "react-bootstrap";
 import { RecordNav } from "../component/RecordNav";
 import "../../css/Record.scss";
 import { RecordList } from "../component/RecordList";
@@ -15,6 +15,7 @@ type Props = {
 // eslint-disable-next-line @typescript-eslint/ban-types
 type State = {
   rerender: boolean;
+  showAlert?: boolean;
   role: "PATIENT" | "DOCTOR_UNVERIFIED" | "DOCTOR";
 };
 
@@ -45,6 +46,21 @@ export class Record extends React.Component<Props, State> {
                 <IoAddCircle />
               </label>
             </div>
+            {this.state.role === "DOCTOR_UNVERIFIED" ? (
+              <Alert
+                show={this.state.showAlert}
+                className={"alert"}
+                dismissible
+                onClick={() => {
+                  this.setState({ showAlert: false });
+                }}
+              >
+                Da Ihre Verifizierung noch aussteht, können Sie noch keine Dokumente mit Patient:innen teilen.
+              </Alert>
+            ) : (
+              ""
+            )}
+
             <RecordList
               toggleReRender={this.state.rerender}
               identityToken={this.props.userId}
