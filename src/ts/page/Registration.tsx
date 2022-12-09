@@ -32,8 +32,8 @@ export class Registration extends React.Component<Props, User> {
       insurance_number: "",
       approbation: "",
       last_name: "",
-      number: 0,
-      postcode: 0,
+      number: "",
+      postcode: "",
       street: "",
     };
   }
@@ -109,20 +109,20 @@ export class Registration extends React.Component<Props, User> {
                   <Form.Group className="mb-3" controlId="formBasicStreetNumber">
                     <Form.Label>Hausnummer</Form.Label>
                     <Form.Control
-                      type="Number"
+                      type="Text"
                       placeholder="20"
                       value={this.state.number}
-                      onChange={(e) => this.handleStreetNumberChange(e.target.value as unknown as number)}
+                      onChange={(e) => this.handleStreetNumberChange(e.target.value)}
                     />
                     <div className={"invalid-msg"} style={{display: street_number_valid ? "none" : ""}}>Hausnummer ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicPostalCode">
                     <Form.Label>Postleitzahl</Form.Label>
                     <Form.Control
-                      type="Number"
+                      type="Text"
                       placeholder="10969"
                       value={this.state.postcode}
-                      onChange={(e) => this.handlePostcodeChange(e.target.value as unknown as number)}
+                      onChange={(e) => this.handlePostcodeChange(e.target.value)}
                     />
                     <div className={"invalid-msg"} style={{display: postcode_valid ? "none" : ""}}>Postleitzahl ungültig</div>
                   </Form.Group>
@@ -207,20 +207,20 @@ export class Registration extends React.Component<Props, User> {
                   <Form.Group className="mb-3" controlId="formBasicStreetNumber">
                     <Form.Label>Hausnummer</Form.Label>
                     <Form.Control
-                      type="Number"
+                      type="Text"
                       placeholder="20"
                       value={this.state.number}
-                      onChange={(e) => this.handleStreetNumberChange(e.target.value as unknown as number)}
+                      onChange={(e) => this.handleStreetNumberChange(e.target.value)}
                     />
                     <div className={"invalid-msg"} style={{display: street_number_valid ? "none" : ""}}>Hausnummer ungültig</div>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="formBasicPostalCode">
                     <Form.Label>Postleitzahl</Form.Label>
                     <Form.Control
-                      type="Number"
+                      type="Text"
                       placeholder="10969"
                       value={this.state.postcode}
-                      onChange={(e) => this.handlePostcodeChange(e.target.value as unknown as number)}
+                      onChange={(e) => this.handlePostcodeChange(e.target.value)}
                     />
                     <div className={"invalid-msg"} style={{display: postcode_valid ? "none" : ""}}>Postleitzahl ungültig</div>
                   </Form.Group>
@@ -300,9 +300,9 @@ export class Registration extends React.Component<Props, User> {
                   });
   }
 
-  handlePostcodeChange(value: number) {
+  handlePostcodeChange(value: string) {
     const regexp = new RegExp("^[0-9]{5}$");
-    if (regexp.test(String(value))) {
+    if (regexp.test(value)) {
       postcode_valid = true;
     }
     else {
@@ -313,9 +313,9 @@ export class Registration extends React.Component<Props, User> {
                   });
   }
 
-  handleStreetNumberChange(value: number) {
+  handleStreetNumberChange(value: string) {
     const regexp = new RegExp("^[0-9]{1,4}$");
-    if (regexp.test(String(value))) {
+    if (regexp.test(value)) {
       street_number_valid = true;
     }
     else {
