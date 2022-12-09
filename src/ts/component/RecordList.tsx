@@ -25,7 +25,7 @@ export class RecordList extends React.Component<Props, State> {
 
     this.state = {
       files: [],
-      userId: "",
+      userId: getUserAccountId(),
     };
   }
 
@@ -51,8 +51,6 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const userId = getUserAccountId();
-    this.setState({ userId });
     this.getFiles();
   }
 
