@@ -119,11 +119,9 @@ export default function ShareModal(props: Props) {
       n_docsActions.push({ docId: id, action: "ADD", role });
     }
 
-    let selectedDoc;
+    let selectedDoc: User | undefined;
     if (role === "DOCTOR") {
-      selectedDoc = docs.find((element) => {
-        return String(element.id) === id;
-      });
+      selectedDoc = docs.find((element) => element.id === id);
     } else {
       selectedDoc = {
         id,
@@ -131,9 +129,9 @@ export default function ShareModal(props: Props) {
         first_name: "",
         last_name: "",
         street: "",
-        number: 0,
+        number: "",
         city: "",
-        postcode: 0,
+        postcode: "",
       };
     }
 
