@@ -5,6 +5,7 @@ import { Alert } from "react-bootstrap";
 import { getTokenResponse, msalInstance } from "../utils/AuthHelper";
 import mslogo from "../../img/microsoft.svg";
 import doctor from "../../img/Doctor.svg";
+import "../../css/Login.css";
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
   onLogin: (authToken: AuthenticationResult) => void;
