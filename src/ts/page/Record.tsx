@@ -7,11 +7,10 @@ import axios from "axios";
 import { IoAddCircle } from "react-icons/io5";
 import { User } from "../models/User";
 import { getIdToken } from "../utils/AuthHelper";
+import { BackendEndpoint } from "../utils/Config";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-type Props = {
-  userId: string;
-};
+type Props = {};
 // eslint-disable-next-line @typescript-eslint/ban-types
 type State = {
   rerender: boolean;
@@ -41,8 +40,8 @@ export class Record extends React.Component<Props, State> {
           </Col>
           <Col id="main-content" xs={10}>
             <div className={"input-bar"}>
-              <input id="fileInput" type="file"  onChange={(e) => this.handleFileUpload(e)} hidden />
-              <label id="fileInputLabel"  htmlFor="fileInput">
+              <input id="fileInput" type="file" onChange={(e) => this.handleFileUpload(e)} hidden />
+              <label id="fileInputLabel" htmlFor="fileInput">
                 <IoAddCircle title={"Hinzufügen"} />
               </label>
             </div>
@@ -65,7 +64,6 @@ export class Record extends React.Component<Props, State> {
 
             <RecordList
               toggleReRender={this.state.rerender}
-              identityToken={this.props.userId}
               role={this.state.role}
               view={window.location.href.split("/").slice(-1)[0]}
             />
@@ -84,7 +82,7 @@ export class Record extends React.Component<Props, State> {
   }
 
   private async getRole() {
-    const uri = "http://localhost:8080/users/";
+    const uri = `${BackendEndpoint}/users/`;
     const body = { jwt: await getIdToken() };
     const result = await axios.post<User>(uri, body);
     const userData = result.data;
@@ -108,7 +106,7 @@ export class Record extends React.Component<Props, State> {
         const formData = new FormData();
         formData.set("file", file);
         formData.set("jwt", jwt ?? "");
-        const url = "http://localhost:8080/files/upload";
+        const url = `${BackendEndpoint}/files/upload`;
         axios.post(url, formData);
       }
     }

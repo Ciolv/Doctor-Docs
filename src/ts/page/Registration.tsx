@@ -3,10 +3,10 @@ import { Alert, Button, Col, Container, Form, Row, Tab, Tabs } from "react-boots
 import "../../css/Registration.scss";
 import { User } from "../models/User";
 import axios from "axios";
-import { getIdToken } from "../utils/AuthHelper";
+import { getIdToken, getUserAccountId } from "../utils/AuthHelper";
+import { BackendEndpoint } from "../utils/Config";
 
 type Props = {
-  identityToken: string;
   onChange?: () => void;
   registrationCompleted?: boolean;
 };
@@ -17,7 +17,7 @@ export class Registration extends React.Component<Props, User> {
     this.state = {
       city: "",
       first_name: "",
-      id: props.identityToken,
+      id: getUserAccountId(),
       insurance: "",
       insurance_number: "",
       approbation: "",
@@ -30,7 +30,7 @@ export class Registration extends React.Component<Props, User> {
 
   componentDidMount() {
     getIdToken().then(async (jwt) => {
-      const uri = "http://localhost:8080/users";
+      const uri = `${BackendEndpoint}/users`;
       const body = {
         jwt,
       };
@@ -295,7 +295,7 @@ export class Registration extends React.Component<Props, User> {
       approbation: this.state.approbation,
     };
     try {
-      axios.post("http://localhost:8080/users/registration", user).then(() => {
+      axios.post(`${BackendEndpoint}/users/registration`, user).then(() => {
         if (this.props.onChange !== undefined) {
           this.props.onChange();
         }

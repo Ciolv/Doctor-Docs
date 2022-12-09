@@ -1,8 +1,8 @@
 import * as React from "react";
-import { AuthenticationResult, PublicClientApplication } from "@azure/msal-browser";
+import { AuthenticationResult } from "@azure/msal-browser";
 import { Navigate } from "react-router-dom";
 import { Alert } from "react-bootstrap";
-import { getTokenResponse, msalConfig } from "../utils/AuthHelper";
+import { getTokenResponse, msalInstance } from "../utils/AuthHelper";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {
@@ -12,8 +12,6 @@ type State = {
   loginRedirect: boolean;
   loginError: boolean;
 };
-
-const msalInstance = new PublicClientApplication(msalConfig);
 
 export class Login extends React.Component<Props, State> {
   constructor(props: Props) {

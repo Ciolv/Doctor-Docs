@@ -8,36 +8,14 @@ import { LabeledIcon } from "./LabeledIcon";
 import { FaBox } from "react-icons/fa";
 import { BsFillShieldLockFill } from "react-icons/bs";
 import { IoMdHelpCircle, IoMdPerson } from "react-icons/io";
-import { AccountInfo, PublicClientApplication } from "@azure/msal-browser";
+import { signOutClickHandler } from "../utils/AuthHelper";
 
 type Props = {
   authenticated?: boolean;
 };
 type State = {};
 
-const msalConfig = {
-  auth: {
-    clientId: "49e6fa71-9a2c-465e-a3bc-8ba2f15bad61",
-    redirectUri: "http://localhost:3000/home",
-  },
-};
-
-const msalInstance = new PublicClientApplication(msalConfig);
-
 export class Navigation extends React.Component<Props, State> {
-  async signOutClickHandler() {
-    const accounts = msalInstance.getAllAccounts();
-    const account: AccountInfo = accounts[0];
-    const homeAccountId = account.homeAccountId;
-
-    const logoutRequest = {
-      account: msalInstance.getAccountByHomeId(homeAccountId),
-      postLogoutRedirectUri: "http://localhost:3000/login",
-      mainWindowRedirectUri: "http://localhost:3000/login",
-    };
-    await msalInstance.logoutPopup(logoutRequest);
-  }
-
   render() {
     return (
       <>
@@ -68,7 +46,7 @@ export class Navigation extends React.Component<Props, State> {
             </Nav.Item>
           </Nav>
           <Navbar.Collapse className="justify-content-end">
-            <Button variant="primary" onClick={() => this.signOutClickHandler()}>
+            <Button variant="primary" onClick={() => signOutClickHandler()}>
               Logout
             </Button>
           </Navbar.Collapse>

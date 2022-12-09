@@ -15,6 +15,7 @@ import axios from "axios";
 import { getIdToken, getUserAccountId } from "../utils/AuthHelper";
 import { User } from "../models/User";
 import { FilePermission } from "../models/File";
+import { BackendEndpoint } from "../utils/Config";
 
 type Props = {
   id: string;
@@ -47,7 +48,7 @@ export default function ShareModal(props: Props) {
     getIdToken().then((jwt) => {
       const body = { jwt };
       props.permissions.forEach((doc) => {
-        const url = `http://localhost:8080/doctors/data/${doc.userId}`;
+        const url = `${BackendEndpoint}/doctors/data/${doc.userId}`;
         const canRead = doc.permission >= FilePermission.Read;
         const hasId = doc.userId !== null && doc.userId !== undefined;
         const alreadyIncluded = permissions
@@ -96,7 +97,7 @@ export default function ShareModal(props: Props) {
     if (docsActions.length > 0) {
       const jwt = await getIdToken();
       for (const permission of docsActions) {
-        const uri = `http://localhost:8080/files/permit/${props.id}`;
+        const uri = `${BackendEndpoint}/files/permit/${props.id}`;
         const body = {
           jwt,
           userId: permission.docId,
@@ -174,7 +175,7 @@ export default function ShareModal(props: Props) {
     setInputValue(event.target.value);
     if (event.target.value !== "" && event.target.value !== undefined) {
       getIdToken().then((jwt) => {
-        const uri = `http://localhost:8080/doctors/${event.target.value}`;
+        const uri = `${BackendEndpoint}/doctors/${event.target.value}`;
         const body = {
           jwt,
         };
@@ -212,7 +213,7 @@ export default function ShareModal(props: Props) {
           const body = {
             jwt,
           };
-          axios.post(`http://localhost:8080/users/search/${numToCheck}`, body).then((response) => {
+          axios.post(`${BackendEndpoint}/users/search/${numToCheck}`, body).then((response) => {
             if (response.data === true) {
               setInsValidity("VALID_USER");
             } else {
@@ -237,7 +238,7 @@ export default function ShareModal(props: Props) {
   return (
     <>
       <Button title={"Teilen"} style={{ background: "none", border: "none" }} onClick={handleShow}>
-        <BsShare title={"Löschen"} className={"trashcan"}/>
+        <BsShare title={"Löschen"} className={"trashcan"} />
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -315,14 +316,31 @@ export default function ShareModal(props: Props) {
                   style={{ width: "79%", float: "left" }}
                 />
                 <div style={{ display: "inline" }}>
-                  {insValidity === "PENDING" ? <BsExclamationCircleFill title={"Unvollständig"}
-                    className={"check pending"}></BsExclamationCircleFill> : ""}
-                  {(insValidity === "VALID_USER" || insValidity === "VALID_NO_USER"
-                  ) ? <BsCheckCircleFill title={"Gültig"}  className={"check valid"}></BsCheckCircleFill> : ""}
-                  {insValidity === "INVALID" ? <BsFillXCircleFill title={"Ungültig"} className={"check invalid"}></BsFillXCircleFill> : ""}
+                  {insValidity === "PENDING" ? (
+                    <BsExclamationCircleFill
+                      title={"Unvollständig"}
+                      className={"check pending"}
+                    ></BsExclamationCircleFill>
+                  ) : (
+                    ""
+                  )}
+                  {insValidity === "VALID_USER" || insValidity === "VALID_NO_USER" ? (
+                    <BsCheckCircleFill title={"Gültig"} className={"check valid"}></BsCheckCircleFill>
+                  ) : (
+                    ""
+                  )}
+                  {insValidity === "INVALID" ? (
+                    <BsFillXCircleFill title={"Ungültig"} className={"check invalid"}></BsFillXCircleFill>
+                  ) : (
+                    ""
+                  )}
                 </div>
-                <Button className={"btn-add"} disabled={insValidity !== "VALID_USER"} id={inputValue}
-                        onClick={addPermission}>
+                <Button
+                  className={"btn-add"}
+                  disabled={insValidity !== "VALID_USER"}
+                  id={inputValue}
+                  onClick={addPermission}
+                >
                   <BsPlusLg title={"Hinzufügen"} className={"trashcan no-margin"}></BsPlusLg>
                 </Button>
                 {insValidity === "VALID_NO_USER" ? (
