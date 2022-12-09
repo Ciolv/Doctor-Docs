@@ -1,35 +1,34 @@
-.login-button-container{
+.login-button-container {
   text-align: center;
   margin-top: 2rem;
   padding-top: 0.5rem;
 }
 
-.login-button{
+.login-button {
   background-color: lightblue;
   width: 16rem;
   height: 3rem;
   font-size: 18px;
   border-radius: 8px;
   border-color: #282c34;
-
 }
 
-.login-button:hover{
+.login-button:hover {
   background-color: #8ecde0;
 }
 
-.main-heading{
+.main-heading {
   margin-top: 2rem;
   margin-bottom: 2rem;
   text-align: center;
 }
 
-.welcome-text{
+.welcome-text {
   margin-left: 15%;
   margin-right: 15%;
 }
 
-.microsoft-logo{
+.microsoft-logo {
   width: 6rem;
   padding-left: 0.7rem;
 }
