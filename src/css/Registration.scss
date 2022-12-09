@@ -26,3 +26,9 @@
   background: $primary !important;
   color: white !important;
 }
+
+.invalid-msg {
+  margin-top: 0.1rem;
+  border-radius: 4px;
+  background-color: darkred;
+}

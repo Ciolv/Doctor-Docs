@@ -6,6 +6,7 @@ import { Alert, Form } from "react-bootstrap";
 import axios from "axios";
 import { BsTrash } from "react-icons/bs";
 import { getIdToken } from "../utils/AuthHelper";
+import { BackendEndpoint } from "../utils/Config";
 
 type Props = {
   id: string;
@@ -26,11 +27,11 @@ export default function ShareModal(props: Props) {
   }
 
   async function deleteDocument() {
-    const uri = `http://localhost:8080/files/delete/${props.id}`;
+    const uri = `${BackendEndpoint}/files/delete/${props.id}`;
     const body = { jwt: await getIdToken() };
     const response = await axios.post(uri, body, { responseType: "json" });
 
-    if (response.status === 200) {
+    if (response.status === 204) {
       setShowAlert(false);
       props.onSuccess(props.id);
       handleClose();
@@ -43,8 +44,8 @@ export default function ShareModal(props: Props) {
 
   return (
     <>
-      <Button style={{ background: "none", border: "none" }} onClick={handleShow}>
-        <BsTrash className={"trashcan"} />
+      <Button title={"Löschen"} style={{ background: "none", border: "none" }} onClick={handleShow}>
+        <BsTrash title={"Löschen"} className={"trashcan"} />
       </Button>
 
       <Modal show={show} onHide={handleClose}>

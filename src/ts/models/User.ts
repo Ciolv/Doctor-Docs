@@ -3,8 +3,8 @@ export type User = {
   first_name: string;
   last_name: string;
   street: string;
-  number: number;
-  postcode: number;
+  number: string;
+  postcode: string;
   city: string;
   insurance_number?: string;
   insurance?: string;

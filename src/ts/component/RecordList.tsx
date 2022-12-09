@@ -1,22 +1,22 @@
 import * as React from "react";
-import { Alert, Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import "../../css/RecordList.scss";
 import ShareModal from "./ShareModal";
 import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
-import { BsDownload, BsStar, BsStarFill } from "react-icons/bs";
-import { getIdToken } from "../utils/AuthHelper";
+import { BsDownload, BsFileEarmarkText, BsStar, BsStarFill } from "react-icons/bs";
+import { getIdToken, getUserAccountId } from "../utils/AuthHelper";
+import { BackendEndpoint } from "../utils/Config";
 
 type Props = {
-  identityToken: string;
   role: "PATIENT" | "DOCTOR" | "DOCTOR_UNVERIFIED";
   view: string;
   toggleReRender: boolean;
 };
 type State = {
   files: File[];
-  showAlert?: boolean;
+  userId: string;
 };
 
 export class RecordList extends React.Component<Props, State> {
@@ -25,7 +25,7 @@ export class RecordList extends React.Component<Props, State> {
 
     this.state = {
       files: [],
-      showAlert: true,
+      userId: getUserAccountId(),
     };
   }
 
@@ -34,7 +34,7 @@ export class RecordList extends React.Component<Props, State> {
       return;
     }
 
-    const uri = `http://localhost:8080/files/get/${fileId}`;
+    const uri = `${BackendEndpoint}/files/get/${fileId}`;
     const body = { jwt: await getIdToken() };
     const response = await axios.post(uri, body, { responseType: "blob" });
 
@@ -55,7 +55,7 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   async getFiles() {
-    const getAllFilesURI = "http://localhost:8080/files";
+    const getAllFilesURI = `${BackendEndpoint}/files`;
     const body = { jwt: await getIdToken() };
     const result = await axios.post(getAllFilesURI, body);
 
@@ -107,78 +107,78 @@ export class RecordList extends React.Component<Props, State> {
     });
 
     return (
-      <Container fluid className="record-list">
-        {this.props.role === "DOCTOR_UNVERIFIED" ? (
-          <Alert
-            show={this.state.showAlert}
-            dismissible
-            onClick={() => {
-              this.setState({ showAlert: false });
-            }}
-          >
-            Da Ihre Verifizierung noch aussteht, können Sie noch keine Dokumente mit Patient:innen teilen.
-          </Alert>
-        ) : (
-          ""
-        )}
-        <Row className="file-record file-record-headline">
-          <Col className="file-thumbnail" xs={"1"}></Col>
-          <Col className="file-name" xs={"8"}>
-            Name
-          </Col>
-          <Col className="file-size" xs={"1"}>
-            Größe
-          </Col>
-          <Col className="file-modify-date" xs={"2"}>
-            Geändert
-          </Col>
-        </Row>
+      <div>
+        <Container fluid className="record-list">
+          <Row className="file-record file-record-headline">
+            <Col className="file-thumbnail" xs={"1"}></Col>
+            <Col className="file-name" xs={"8"}>
+              Name
+            </Col>
+            <Col className="file-size" xs={"1"}>
+              Größe
+            </Col>
+            <Col className="file-modify-date" xs={"2"}>
+              Geändert
+            </Col>
+          </Row>
 
-        {files.map((file) => (
-          <Row className="file-record" key={file.id} id={file.id.toString()}>
-            <Col className="file-thumbnail" xs={"1"}>
-              IMG
-            </Col>
-            <Col className="file-name" xs={"6"}>
-              {file.name}
-            </Col>
-            <Col className="file-options" xs={"2"}>
-              <div>
-                <Button value={String(file.marked)} onClick={(e) => this.updateMarked(e)} className={"btn-icon"}>
-                  {file.marked ? <BsStarFill className={"star yellow"} /> : <BsStar className={"star"} />}
-                </Button>
-                <Button onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
-                  <BsDownload className={"download"} />
-                </Button>
-                <DeleteModal
-                  onSuccess={(id) => this.handleOnSuccess(id)}
-                  id={file.id}
-                  name={file.name}
-                  owner={file.ownerId}
-                />
-                {this.props.role === "PATIENT" || this.props.role === "DOCTOR" ? (
-                  <ShareModal
+          {files.map((file) => (
+            <Row className="file-record" key={file.id} id={file.id.toString()}>
+              <Col className="file-thumbnail" xs={"1"}>
+                <BsFileEarmarkText title={"File-Icon"} style={{ scale: "2" }}></BsFileEarmarkText>
+              </Col>
+              <Col className="file-name" xs={"6"}>
+                {file.name}
+              </Col>
+              <Col className="file-options" xs={"2"}>
+                <div>
+                  <Button
+                    title={"Markieren"}
+                    value={String(file.marked)}
+                    onClick={(e) => this.updateMarked(e)}
+                    className={"btn-icon"}
+                  >
+                    {file.marked ? (
+                      <BsStarFill title={"Markiert"} className={"star yellow"} />
+                    ) : (
+                      <BsStar title={"Markieren"} className={"star"} />
+                    )}
+                  </Button>
+                  <Button title={"Herunterladen"} onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
+                    <BsDownload title={"Herunterladen"} className={"download"} />
+                  </Button>
+                  <DeleteModal
+                    onSuccess={(id) => this.handleOnSuccess(id)}
                     id={file.id}
                     name={file.name}
                     owner={file.ownerId}
-                    identityToken={this.props.identityToken}
-                    permissions={file.users}
-                    role={this.props.role}
                   />
-                ) : (
-                  ""
-                )}
-              </div>
-            </Col>
-            <Col className="file-size" xs={"1"}>
-              {file.getFileSize()}
-            </Col>
-            <Col className="file-modify-date" xs={"2"}>
-              {file.lastUpdateTime.toDateString()}
-            </Col>
-          </Row>
-        ))}
-      </Container>
+
+                  {this.props.role === "PATIENT" ||
+                  (this.props.role === "DOCTOR" && file.ownerId === this.state.userId) ? (
+                    <ShareModal
+                      id={file.id}
+                      name={file.name}
+                      owner={file.ownerId}
+                      identityToken={this.state.userId}
+                      permissions={file.users}
+                      role={this.props.role}
+                    />
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </Col>
+              <Col className="file-size" xs={"1"}>
+                {file.getFileSize()}
+              </Col>
+              <Col className="file-modify-date" xs={"2"}>
+                {file.lastUpdateTime.toDateString()}
+              </Col>
+            </Row>
+          ))}
+        </Container>
+      </div>
     );
   }
 
@@ -205,7 +205,7 @@ export class RecordList extends React.Component<Props, State> {
     }
     const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
 
-    const uri = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}`;
+    const uri = `${BackendEndpoint}/files/mark/${id}?value=${(!value).toString()}`;
     const body = { jwt: await getIdToken() };
     await axios.post(uri, body, { responseType: "json" });
 

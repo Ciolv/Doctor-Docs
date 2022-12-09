@@ -9,15 +9,20 @@ nav.navbar {
   padding: 0 0.5rem;
   border-bottom: 1px solid $light-gray;
 }
+.nav-link.active {
+  color: rgba(158, 162, 254, 0.94) !important;
+}
 
-.security-button{
+.security-button {
   margin-left: 2rem;
   background-color: red;
 }
 
-.mailto-link:link{
+.mailto-link:link {
+  text-decoration: none;
   color: black;
 }
-.mailto-link:visited{
+.mailto-link:visited {
+  text-decoration: none;
   color: black;
 }

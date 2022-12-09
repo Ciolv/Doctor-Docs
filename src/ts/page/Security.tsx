@@ -2,7 +2,9 @@ import * as React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import "../../css/Security.scss";
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
+// eslint-disable-next-line @typescript-eslint/ban-types
 type State = {};
 
 export class Security extends React.Component<Props, State> {
