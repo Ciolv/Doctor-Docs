@@ -1,14 +1,21 @@
 import { AccountInfo, AuthenticationResult, PublicClientApplication } from "@azure/msal-browser";
+import {
+  OAuthClientId,
+  OAuthLogoutRedirectURI,
+  OAuthMainWindowRedirectURI,
+  OAuthRedirectURI,
+  OAuthTenantURI,
+} from "./Config";
 
 export const msalConfig = {
   auth: {
-    clientId: "49e6fa71-9a2c-465e-a3bc-8ba2f15bad61",
-    authority: "https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad",
-    redirectUri: "http://localhost:3000/home",
+    clientId: OAuthClientId,
+    authority: OAuthTenantURI,
+    redirectUri: OAuthRedirectURI,
   },
 };
 
-const msalInstance = new PublicClientApplication(msalConfig);
+export const msalInstance = new PublicClientApplication(msalConfig);
 
 export function getUserAccount(): AccountInfo | null {
   const accounts = msalInstance.getAllAccounts();
@@ -42,4 +49,17 @@ export async function getTokenResponse(): Promise<AuthenticationResult | null> {
 export async function getIdToken() {
   const account = await getTokenResponse();
   return account?.idToken;
+}
+
+export async function signOutClickHandler() {
+  const accounts = msalInstance.getAllAccounts();
+  const account: AccountInfo = accounts[0];
+  const homeAccountId = account.homeAccountId;
+
+  const logoutRequest = {
+    account: msalInstance.getAccountByHomeId(homeAccountId),
+    postLogoutRedirectUri: OAuthLogoutRedirectURI,
+    mainWindowRedirectUri: OAuthMainWindowRedirectURI,
+  };
+  await msalInstance.logoutPopup(logoutRequest);
 }

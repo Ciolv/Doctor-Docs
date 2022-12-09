@@ -6,16 +6,17 @@ import DeleteModal from "./DeleteModal";
 import { File } from "../models/File";
 import axios from "axios";
 import { BsDownload, BsFileEarmarkText, BsStar, BsStarFill } from "react-icons/bs";
-import { getIdToken } from "../utils/AuthHelper";
+import { getIdToken, getUserAccountId } from "../utils/AuthHelper";
+import { BackendEndpoint } from "../utils/Config";
 
 type Props = {
-  identityToken: string;
   role: "PATIENT" | "DOCTOR" | "DOCTOR_UNVERIFIED";
   view: string;
   toggleReRender: boolean;
 };
 type State = {
   files: File[];
+  userId: string;
 };
 
 export class RecordList extends React.Component<Props, State> {
@@ -24,6 +25,7 @@ export class RecordList extends React.Component<Props, State> {
 
     this.state = {
       files: [],
+      userId: "",
     };
   }
 
@@ -32,7 +34,7 @@ export class RecordList extends React.Component<Props, State> {
       return;
     }
 
-    const uri = `http://localhost:8080/files/get/${fileId}`;
+    const uri = `${BackendEndpoint}/files/get/${fileId}`;
     const body = { jwt: await getIdToken() };
     const response = await axios.post(uri, body, { responseType: "blob" });
 
@@ -49,11 +51,13 @@ export class RecordList extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    const userId = getUserAccountId();
+    this.setState({ userId });
     this.getFiles();
   }
 
   async getFiles() {
-    const getAllFilesURI = "http://localhost:8080/files";
+    const getAllFilesURI = `${BackendEndpoint}/files`;
     const body = { jwt: await getIdToken() };
     const result = await axios.post(getAllFilesURI, body);
 
@@ -93,7 +97,6 @@ export class RecordList extends React.Component<Props, State> {
 
   render() {
     const files: File[] = [];
-    console.log(this.props.view);
     this.state.files.forEach((file) => {
       if (
         this.props.view === "record" ||
@@ -101,7 +104,6 @@ export class RecordList extends React.Component<Props, State> {
         (this.props.view === "marked" && file.marked) ||
         (this.props.view === "newest" && file.lastUpdateTime.getDate() > new Date().getDate() - 8)
       ) {
-        console.log("push");
         files.push(file);
       }
     });
@@ -122,36 +124,45 @@ export class RecordList extends React.Component<Props, State> {
             </Col>
           </Row>
 
-        {files.map((file) => (
-          <Row className="file-record" key={file.id} id={file.id.toString()}>
-            <Col className="file-thumbnail" xs={"1"}>
-              <BsFileEarmarkText title={"File-Icon"} style={{scale: "2"}}></BsFileEarmarkText>
-            </Col>
-            <Col className="file-name" xs={"6"}>
-              {file.name}
-            </Col>
-            <Col className="file-options" xs={"2"}>
-              <div>
-                <Button title={"Markieren"} value={String(file.marked)} onClick={(e) => this.updateMarked(e)} className={"btn-icon"}>
-                  {file.marked ? <BsStarFill title={"Markiert"} className={"star yellow"} /> : <BsStar title={"Markieren"} className={"star"} />}
-                </Button>
-                <Button title={"Herunterladen"} onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
-                  <BsDownload title={"Herunterladen"} className={"download"} />
-                </Button>
-                <DeleteModal
-                  onSuccess={(id) => this.handleOnSuccess(id)}
-                  id={file.id}
-                  name={file.name}
-                  owner={file.ownerId}
-                />
+          {files.map((file) => (
+            <Row className="file-record" key={file.id} id={file.id.toString()}>
+              <Col className="file-thumbnail" xs={"1"}>
+                <BsFileEarmarkText title={"File-Icon"} style={{ scale: "2" }}></BsFileEarmarkText>
+              </Col>
+              <Col className="file-name" xs={"6"}>
+                {file.name}
+              </Col>
+              <Col className="file-options" xs={"2"}>
+                <div>
+                  <Button
+                    title={"Markieren"}
+                    value={String(file.marked)}
+                    onClick={(e) => this.updateMarked(e)}
+                    className={"btn-icon"}
+                  >
+                    {file.marked ? (
+                      <BsStarFill title={"Markiert"} className={"star yellow"} />
+                    ) : (
+                      <BsStar title={"Markieren"} className={"star"} />
+                    )}
+                  </Button>
+                  <Button title={"Herunterladen"} onClick={(e) => this.handleDownloadClick(e)} className={"btn-icon"}>
+                    <BsDownload title={"Herunterladen"} className={"download"} />
+                  </Button>
+                  <DeleteModal
+                    onSuccess={(id) => this.handleOnSuccess(id)}
+                    id={file.id}
+                    name={file.name}
+                    owner={file.ownerId}
+                  />
 
                   {this.props.role === "PATIENT" ||
-                  (this.props.role === "DOCTOR" && file.ownerId === this.props.identityToken) ? (
+                  (this.props.role === "DOCTOR" && file.ownerId === this.state.userId) ? (
                     <ShareModal
                       id={file.id}
                       name={file.name}
                       owner={file.ownerId}
-                      identityToken={this.props.identityToken}
+                      identityToken={this.state.userId}
                       permissions={file.users}
                       role={this.props.role}
                     />
@@ -196,7 +207,7 @@ export class RecordList extends React.Component<Props, State> {
     }
     const value = (e.currentTarget as HTMLElement).getAttribute("value") === "true";
 
-    const uri = `http://localhost:8080/files/mark/${id}?value=${(!value).toString()}`;
+    const uri = `${BackendEndpoint}/files/mark/${id}?value=${(!value).toString()}`;
     const body = { jwt: await getIdToken() };
     await axios.post(uri, body, { responseType: "json" });
 

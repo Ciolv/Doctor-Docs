@@ -6,6 +6,7 @@ import { Alert, Form } from "react-bootstrap";
 import axios from "axios";
 import { BsTrash } from "react-icons/bs";
 import { getIdToken } from "../utils/AuthHelper";
+import { BackendEndpoint } from "../utils/Config";
 
 type Props = {
   id: string;
@@ -26,7 +27,7 @@ export default function ShareModal(props: Props) {
   }
 
   async function deleteDocument() {
-    const uri = `http://localhost:8080/files/delete/${props.id}`;
+    const uri = `${BackendEndpoint}/files/delete/${props.id}`;
     const body = { jwt: await getIdToken() };
     const response = await axios.post(uri, body, { responseType: "json" });
 

@@ -3,10 +3,10 @@ import { Alert, Button, Col, Container, Form, Row, Tab, Tabs } from "react-boots
 import "../../css/Registration.scss";
 import { User } from "../models/User";
 import axios from "axios";
-import { getIdToken } from "../utils/AuthHelper";
+import { getIdToken, getUserAccountId } from "../utils/AuthHelper";
+import { BackendEndpoint } from "../utils/Config";
 
 type Props = {
-  identityToken: string;
   onChange?: () => void;
   registrationCompleted?: boolean;
 };
@@ -17,7 +17,7 @@ export class Registration extends React.Component<Props, User> {
     this.state = {
       city: "",
       first_name: "",
-      id: props.identityToken,
+      id: "",
       insurance: "",
       insurance_number: "",
       approbation: "",
@@ -28,9 +28,16 @@ export class Registration extends React.Component<Props, User> {
     };
   }
 
+
   componentDidMount() {
+    const idToken = getUserAccountId();
+
+    if (this.state.id !== idToken) {
+      this.setState({ id: idToken });
+    }
+
     getIdToken().then(async (jwt) => {
-      const uri = "http://localhost:8080/users";
+      const uri = `${BackendEndpoint}/users`;
       const body = {
         jwt,
       };
@@ -53,7 +60,7 @@ export class Registration extends React.Component<Props, User> {
               <Alert className={"alert-danger"}>Ihre Registrierung ist erfolgreich abgeschlossen!</Alert>
             )}
             <Row>
-              <Col xs={3} />
+              <Col xs={3}/>
               <Col xs={6} className="user-form">
                 <Form>
                   <Form.Group className="mb-3" controlId="formBasicGivenName">
@@ -133,7 +140,7 @@ export class Registration extends React.Component<Props, User> {
                   </Button>
                 </Form>
               </Col>
-              <Col xs={3} />
+              <Col xs={3}/>
             </Row>
           </Container>
         </Tab>
@@ -143,7 +150,7 @@ export class Registration extends React.Component<Props, User> {
               <Alert className={"alert-danger"}>Ihre Registrierung ist erfolgreich abgeschlossen!</Alert>
             )}
             <Row>
-              <Col xs={3} />
+              <Col xs={3}/>
               <Col xs={6} className="user-form">
                 <Form>
                   <Form.Group className="mb-3" controlId="formBasicGivenName">
@@ -219,7 +226,7 @@ export class Registration extends React.Component<Props, User> {
                   </Button>
                 </Form>
               </Col>
-              <Col xs={3} />
+              <Col xs={3}/>
             </Row>
           </Container>
         </Tab>
@@ -229,56 +236,56 @@ export class Registration extends React.Component<Props, User> {
 
   handleInsuranceNumberChange(value: string) {
     this.setState({
-      insurance_number: value,
-    });
+                    insurance_number: value,
+                  });
   }
 
   handleApprobationChange(value: string) {
     this.setState({
-      approbation: value,
-    });
+                    approbation: value,
+                  });
   }
 
   handleInsuranceChange(value: string) {
     this.setState({
-      insurance: value,
-    });
+                    insurance: value,
+                  });
   }
 
   handleCityChange(value: string) {
     this.setState({
-      city: value,
-    });
+                    city: value,
+                  });
   }
 
   handlePostcodeChange(value: number) {
     this.setState({
-      postcode: value,
-    });
+                    postcode: value,
+                  });
   }
 
   handleStreetNumberChange(value: number) {
     this.setState({
-      number: value,
-    });
+                    number: value,
+                  });
   }
 
   handleStreetChange(value: string) {
     this.setState({
-      street: value,
-    });
+                    street: value,
+                  });
   }
 
   handleFirstNameChange(value: string) {
     this.setState({
-      first_name: value,
-    });
+                    first_name: value,
+                  });
   }
 
   handleLastNameChange(value: string) {
     this.setState({
-      last_name: value,
-    });
+                    last_name: value,
+                  });
   }
 
   handleSubmit() {
@@ -295,7 +302,7 @@ export class Registration extends React.Component<Props, User> {
       approbation: this.state.approbation,
     };
     try {
-      axios.post("http://localhost:8080/users/registration", user).then(() => {
+      axios.post(`${BackendEndpoint}/users/registration`, user).then(() => {
         if (this.props.onChange !== undefined) {
           this.props.onChange();
         }

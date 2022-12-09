@@ -10,6 +10,7 @@ import { AuthenticationResult } from "@azure/msal-browser";
 import axios from "axios";
 import { getIdToken, getUserAccountId } from "./utils/AuthHelper";
 import { Help } from "./page/Help";
+import { BackendEndpoint } from "./utils/Config";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type Props = {};
@@ -53,7 +54,7 @@ export default class App extends React.Component<Props, State> {
   async registrationCompleted() {
     const userId = getUserAccountId();
     if (userId) {
-      const uri = "http://localhost:8080/users/registrationCompleted";
+      const uri = `${BackendEndpoint}/users/registrationCompleted`;
       const body = { jwt: await getIdToken() };
       const response = await axios.post(uri, body);
 
@@ -78,19 +79,14 @@ export default class App extends React.Component<Props, State> {
             <Routes>
               <Route path="/" element={<Navigate replace to="/record" />} />
               <Route path="/record">
-                <Route index element={<Record userId={this.state.identityToken} />} />
-                <Route path="newest" element={<Record userId={this.state.identityToken} />} />
-                <Route path="marked" element={<Record userId={this.state.identityToken} />} />
-                <Route path="shared" element={<Record userId={this.state.identityToken} />} />
+                <Route index element={<Record />} />
+                <Route path="newest" element={<Record />} />
+                <Route path="marked" element={<Record />} />
+                <Route path="shared" element={<Record />} />
               </Route>
               <Route
                 path="/for-me"
-                element={
-                  <Registration
-                    identityToken={this.state.identityToken}
-                    registrationCompleted={this.state.registrationCompleted}
-                  />
-                }
+                element={<Registration registrationCompleted={this.state.registrationCompleted} />}
               />
               <Route path="/security" element={<Security />} />
               <Route path="/help" element={<Help />} />
@@ -107,7 +103,6 @@ export default class App extends React.Component<Props, State> {
               path="*"
               element={
                 <Registration
-                  identityToken={this.state.identityToken}
                   onChange={() => this.handleRegistrationChange()}
                   registrationCompleted={this.state.registrationCompleted}
                 />
