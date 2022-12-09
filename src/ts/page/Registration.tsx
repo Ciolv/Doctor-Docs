@@ -263,7 +263,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleInsuranceNumberChange(value: string) {
-    const regexp = new RegExp("^[A-Z]{1}[0-9]{9}$");
+    const regexp = /^[A-Z]{1}[0-9]{9}$/;
     if (regexp.test(value)) {
       insurance_number_valid = true;
     } else {
@@ -274,7 +274,7 @@ export class Registration extends React.Component<Props, User> {
     };
 
   handleInsuranceChange(value: string) {
-    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$");
+    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$/;
     if (regexp.test(value)) {
       insurance_valid = true;
     }
@@ -288,7 +288,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleCityChange(value: string) {
-    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$");
+    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$/;
     if (regexp.test(value)) {
       city_valid = true;
     }
@@ -301,7 +301,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handlePostcodeChange(value: string) {
-    const regexp = new RegExp("^[0-9]{5}$");
+    const regexp = /^[0-9]{5}$/;
     if (regexp.test(value)) {
       postcode_valid = true;
     }
@@ -314,7 +314,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleStreetNumberChange(value: string) {
-    const regexp = new RegExp("^[0-9]{1,4}$");
+    const regexp = /^[0-9]{1,4}$/;
     if (regexp.test(value)) {
       street_number_valid = true;
     }
@@ -327,7 +327,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleStreetChange(value: string) {
-    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$");
+    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$/;
     if (regexp.test(value)) {
       street_valid = true;
     }
@@ -340,7 +340,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleFirstNameChange(value: string) {
-    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù \\-\\s\\.]+$");
+    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù \\-\\s\\.]+$/;
     if (regexp.test(value)) {
       first_name_valid = true;
     }
@@ -353,7 +353,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleLastNameChange(value: string) {
-    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s\\.]+$");
+    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s\\.]+$/;
     if (regexp.test(value)) {
       last_name_valid = true;
     }
@@ -366,7 +366,7 @@ export class Registration extends React.Component<Props, User> {
   };
 
   handleApprobationChange(value: string) {
-    const regexp = new RegExp("^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù \\-\\s]+$");
+    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù \\-\\s]+$/;
     if (regexp.test(value)) {
       approbation_valid = true;
     }
