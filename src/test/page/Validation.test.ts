@@ -1,10 +1,12 @@
 import {
   isCityName,
   isInsuranceName,
-  isInsuranceNumber, isFirstName, isLastName,
+  isInsuranceNumber,
+  isFirstName,
+  isLastName,
   isPostcode,
   isStreetName,
-  isStreetNumber
+  isStreetNumber,
 } from "../../ts/utils/Validation";
 
 describe("Input validation", () => {
@@ -359,4 +361,3 @@ describe("Input validation", () => {
     }
   });
 });
-
