@@ -5,6 +5,13 @@ import { User } from "../models/User";
 import axios from "axios";
 import { getIdToken, getUserAccountId } from "../utils/AuthHelper";
 import { BackendEndpoint } from "../utils/Config";
+import {
+  isCityName,
+  isInsuranceName,
+  isInsuranceNumber, isFirstName, isLastName,
+  isPostcode, isStreetName,
+  isStreetNumber
+} from "../utils/Validation";
 
 type Props = {
   onChange?: () => void;
@@ -255,8 +262,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleInsuranceNumberChange(value: string) {
-    const regexp = /^[A-Z]{1}[0-9]{9}$/;
-    if (regexp.test(value)) {
+    if (isInsuranceNumber(value)) {
       insurance_number_valid = true;
     } else {
       insurance_number_valid = false;
@@ -266,8 +272,7 @@ export class Registration extends React.Component<Props, User> {
     };
 
   handleInsuranceChange(value: string) {
-    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$/;
-    if (regexp.test(value)) {
+    if (isInsuranceName(value)) {
       insurance_valid = true;
     }
     else {
@@ -280,8 +285,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleCityChange(value: string) {
-    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$/;
-    if (regexp.test(value)) {
+    if (isCityName(value)) {
       city_valid = true;
     }
     else {
@@ -293,8 +297,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handlePostcodeChange(value: string) {
-    const regexp = /^[0-9]{5}$/;
-    if (regexp.test(value)) {
+    if (isPostcode(value)) {
       postcode_valid = true;
     }
     else {
@@ -306,8 +309,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleStreetNumberChange(value: string) {
-    const regexp = /^[0-9]{1,4}$/;
-    if (regexp.test(value)) {
+    if (isStreetNumber(value)) {
       street_number_valid = true;
     }
     else {
@@ -319,8 +321,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleStreetChange(value: string) {
-    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s]+$/;
-    if (regexp.test(value)) {
+    if (isStreetName(value)) {
       street_valid = true;
     }
     else {
@@ -332,8 +333,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleFirstNameChange(value: string) {
-    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù \\-\\s\\.]+$/;
-    if (regexp.test(value)) {
+    if (isFirstName(value)) {
       first_name_valid = true;
     }
     else {
@@ -345,8 +345,7 @@ export class Registration extends React.Component<Props, User> {
   }
 
   handleLastNameChange(value: string) {
-    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù\\-\\s\\.]+$/;
-    if (regexp.test(value)) {
+    if (isLastName(value)) {
       last_name_valid = true;
     }
     else {
@@ -358,8 +357,7 @@ export class Registration extends React.Component<Props, User> {
   };
 
   handleApprobationChange(value: string) {
-    const regexp = /^[A-ZÄÖÜÊÉÈÔÓÒÛÚÙ][a-zA-ZÄÖÜäöüÊÉÈêéèÔÓÒôóòÛÚÙûúù \\-\\s]+$/;
-    if (regexp.test(value)) {
+    if (isCityName(value)) {
       approbation_valid = true;
     }
     else {
