@@ -85,8 +85,8 @@ export class Help extends React.Component<Props, State> {
               <Accordion.Body>
                 Gegenwärtig ist eine Nutzung der Anwendung ohne Microsoft-Konto leider <b>nicht möglich</b>.
                 Wir arbeiten daran, Ihnen künftig auch andere Authentifizierungsoptionen anbieten zu können.
-                Ein Microsoft-Konto ist für Privatpersonen kostenlos. Häufig nutzen Unternehmen Microsoft-Konten für Ihre
-                Mitarbeitenden - auch diese Konten können Sie für Doctor Docs verwenden.
+                Ein Microsoft-Konto ist für Privatpersonen kostenlos. Sofern Sie Office 365 nutzen,
+                sind Sie vermutlich in Besitz eines Microsoft-Kontos.
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="2">
@@ -117,7 +117,15 @@ export class Help extends React.Component<Props, State> {
                 Die Kosten für diese Version sind selbstverständlich privat zu tragen.
               </Accordion.Body>
             </Accordion.Item>
-          </Accordion>
+            <Accordion.Item eventKey="5">
+              <Accordion.Header>Ich bin Behandler:in. Wie werde ich verifiziert?</Accordion.Header>
+              <Accordion.Body>
+                Behandler:innen müssen gegenwärtig manuell verifiziert werden. Über die Angabe Ihres Approbations-/Zulassungsortes
+                ermöglichen Sie es uns, Ihre Angaben zu verifizieren. Sofern Sie Ihre Angaben ändern, ist eine erneute Verifikation erforderlich. <br/><br/>
+                Sollten Sie dringend Zugriff auf Daten der Anwendung benötigen oder Gefahr im Verzug sein, wenden Sie sich bitte umgehend an uns!
+              </Accordion.Body>
+            </Accordion.Item>
+        </Accordion>
           <br/>&nbsp;<br/>
           <h3>
             Freigaben und Freigeben

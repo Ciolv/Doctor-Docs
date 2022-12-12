@@ -63,7 +63,7 @@ export default function ShareModal(props: Props) {
               id: docMeta.data.id,
               first_name: docMeta.data.first_name,
               last_name: docMeta.data.last_name,
-              number: docMeta.data.last_name,
+              number: docMeta.data.number,
               street: docMeta.data.street,
               postcode: docMeta.data.postcode,
               city: docMeta.data.city,
